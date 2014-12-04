@@ -7,17 +7,16 @@ Enrico Fasoli, Gianluca Rocco, Roberto Dalipaj, Marco Carne, Raffaele Cristodaro
 Il server mantiene la lista di tutte le parole con una stringa per la parola e una per il significato. I client si collegano e il server crea un thread per la comunicazione.
 Quando una parola viene inserita o modificata dal client viene aggiornata la lista e tutti i client ricevono l’aggiornamento via socket tcp.
 
-_Record_: classe java che rappresenta la combinazione di una parola e il suo significato.
+_Record_: array di 2 String che rappresenta un termine e il suo significato.
 
-_Gestione thread safe_: i dati sono in una lista che tramite Collections.synchronizedList viene resa thread safe automaticamente da Java.
+_Gestione thread safe_: i dati sono in una lista che tramite `Collections.synchronizedList` viene resa thread safe automaticamente da Java.
 
-_Protocollo_: vengono inviate stringhe per comunicare, il record viene inviato nel formato “parola: significato” con “parola” tutto minuscolo.
+_Protocollo_: vengono inviate stringhe per comunicare, il record viene inviato nel formato `parola: significato` con `parola` tutto minuscolo.
 
 _Interfaccia_:
 - lista di parole: clicco su una parola e vedo il significato e posso modificarlo.
 - filtro: un campo di testo che posso usare per filtrare la lista
-- tasto inserisci per inserire una nuova parola
-- tasto modifica per modificare il significato di una parola
+- Possibilità di aggiungere, modificare o eliminare termini
 
 _Roadmap_ (percorso di sviluppo):
 - Server che carica le parole da file
@@ -27,7 +26,10 @@ _Roadmap_ (percorso di sviluppo):
 
 ## Implementazione
 
-_Server_:
+Documentazione a livello di classi e funzioni:
+
+### Server
+
 - Server: accetta le connessioni (__Insieme__)
 - ClientHandler: un'instanza per ogni client con il suo thread. La classe
 contiene la lista dei client. (__Fasoli__)
@@ -35,14 +37,21 @@ contiene la lista dei client. (__Fasoli__)
 - Glossario: utility per modificare e leggere il glossario (__Fasoli__)
   - Salvataggio e lettura da file
 
-_Client_:
+### Client
+
 - GUI
-  - Finestra Principale per il glossario (__Rocco e Sara__)
+  - Finestra Principale (main class) per il glossario (__Rocco e Sara__)
+    - Primo avvio (file di impostazioni assente):
+      - Creo file con opzioni di default
+      - avviso l'utente che deve configurare le opzioni
+      - informo l'utente sull'uso del Manuale
+    - Esportare il glossario su file in locale lato client
+    - Importare termini da file lato client
   - Finestra opzioni (per configurare la connessione)
-    - Devono essere salvate su file
+    - Devono essere salvate e caricate da file
   - Finestra manuale utente
-  - Esportare il glossario in locale lato client
-  - Importare termini lato client
-- Interfaccia di Rete per la connessione
+    - contiene diverse schede
+
+- Interfaccia di Rete per la connessione (classe Network)
 
 __Nota Bene:__ la documentazione e il programma devono essere in inglese alla fine!
