@@ -7,10 +7,10 @@ import java.util.logging.Logger;
 import net.ClientHandler;
 
 public class Server {
-    
+
     private static Glossary glossary;
-    
-    public static void main(String args[]){
+
+    public static void main(String args[]) {
         System.out.println("Glossary Server");
         // Test
         glossary = new Glossary();
@@ -23,10 +23,12 @@ public class Server {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
-        while(true){
+        while (true) {
             System.out.println("Awaiting a connection...");
+            ClientHandler c = null;
             try {
-                new ClientHandler(ss.accept());
+                new Thread(c = new ClientHandler(ss.accept())).start();
+                System.out.println(c.getSocket().getInetAddress().getHostAddress() + " has connected");
             } catch (IOException ex) {
                 System.out.println("There was a problem accepting a connection.");
             }
@@ -36,5 +38,5 @@ public class Server {
     public static Glossary getGlossary() {
         return glossary;
     }
-    
+
 }
