@@ -33,8 +33,10 @@ public class GUI extends javax.swing.JFrame {
         meaning = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         file = new javax.swing.JMenu();
-        exit = new javax.swing.JMenuItem();
+        manual = new javax.swing.JMenuItem();
         about = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        exit = new javax.swing.JMenuItem();
         edit = new javax.swing.JMenu();
         settings = new javax.swing.JMenuItem();
 
@@ -83,6 +85,26 @@ public class GUI extends javax.swing.JFrame {
 
         file.setText("File");
 
+        manual.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.CTRL_MASK));
+        manual.setText("User Manual");
+        manual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                manualActionPerformed(evt);
+            }
+        });
+        file.add(manual);
+
+        about.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        about.setText("About");
+        about.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutActionPerformed(evt);
+            }
+        });
+        file.add(about);
+        file.add(jSeparator1);
+
+        exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
         exit.setText("Exit");
         exit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -91,18 +113,11 @@ public class GUI extends javax.swing.JFrame {
         });
         file.add(exit);
 
-        about.setText("About");
-        about.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aboutActionPerformed(evt);
-            }
-        });
-        file.add(about);
-
         jMenuBar1.add(file);
 
         edit.setText("Edit");
 
+        settings.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         settings.setText("Settings");
         settings.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -134,6 +149,7 @@ public class GUI extends javax.swing.JFrame {
      */
     private void settingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_settingsActionPerformed
 
     /**
@@ -144,6 +160,15 @@ public class GUI extends javax.swing.JFrame {
     private void aboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_aboutActionPerformed
+
+    /**
+     * Event handler for the user manual button
+     * it opens the user manual window
+     * @param evt 
+     */
+    private void manualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manualActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_manualActionPerformed
 
     /**
      * @param args the command line arguments
@@ -193,7 +218,9 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JTextArea mText;
+    private javax.swing.JMenuItem manual;
     private javax.swing.JLabel meaning;
     private javax.swing.JMenuItem settings;
     // End of variables declaration//GEN-END:variables
