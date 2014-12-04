@@ -1,6 +1,6 @@
 # Documentazione Glossario
 
-Enrico Fasoli, Gianluca Rocco, Roberto Dalipaj, Marco Carne, Raffaele Cristodaro
+Enrico Fasoli, Gianluca Rocco, Roberto Dalipaj, Marco Carne, Raffaele Cristodaro, Sara Dendena
 
 ## Funzionamento
 
@@ -28,16 +28,21 @@ _Roadmap_ (percorso di sviluppo):
 ## Implementazione
 
 _Server_:
-- Server: accetta le connessioni
+- Server: accetta le connessioni (__Insieme__)
 - ClientHandler: un'instanza per ogni client con il suo thread. La classe
-contiene la lista dei client.
-- File: utility per leggere e scrivere da file
-- Glossario: utility per modificare e leggere il glossario
+contiene la lista dei client. (__Fasoli__)
+- File: utility per leggere e scrivere da file (__Insieme__)
+- Glossario: utility per modificare e leggere il glossario (__Fasoli__)
+  - Salvataggio e lettura da file
 
 _Client_:
 - GUI
-- Finestra Principale per il glossario
-- Finestra opzioni (per configurare la connessione)
-- devono essere salvate su file
-- Manuale utente
-- Interfaccia di Rete
+  - Finestra Principale per il glossario (__Rocco e Sara__)
+  - Finestra opzioni (per configurare la connessione)
+    - Devono essere salvate su file
+  - Finestra manuale utente
+  - Esportare il glossario in locale lato client
+  - Importare termini lato client
+- Interfaccia di Rete per la connessione
+
+__Nota Bene:__ la documentazione e il programma devono essere in inglese alla fine!
