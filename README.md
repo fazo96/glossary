@@ -41,6 +41,7 @@ contiene la lista dei client. (__Fasoli__)
 
 - GUI
   - Finestra Principale (main class) per il glossario (__Rocco e Sara__)
+    - Deve avere dei metodi per aggiornare la lista dei termini del glossario
     - Primo avvio (file di impostazioni assente):
       - Creo file con opzioni di default
       - avviso l'utente che deve configurare le opzioni
@@ -53,5 +54,14 @@ contiene la lista dei client. (__Fasoli__)
     - contiene diverse schede
 
 - Interfaccia di Rete per la connessione (classe Network)
+  - richiede un socket collegato col server
+  - deve ricevere messaggi dal server ed eseguire i comandi, aggiornando la GUI (thread separato)
+  - deve poter mandare messaggi al server
+
+### GlossarioLib
+
+è la libreria condivisa dal client e il server che contiene delle Classi comuni, tra cui:
+- FileUtil che permette di leggere e scrivere da file comodamente
+- Glossary che rappresenta il glossario
 
 __Nota Bene:__ la documentazione e il programma devono essere in inglese alla fine!
