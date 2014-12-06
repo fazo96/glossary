@@ -1,5 +1,6 @@
 package main;
 
+import glossary.CommandParser;
 import glossary.Glossary;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -10,22 +11,45 @@ import net.ClientHandler;
 public class Server {
 
     private static Glossary glossary;
+    private static CommandParser parser;
+    private static int port = 4000;
 
     public static void main(String args[]) {
         System.out.println("Glossary Server");
-        // Test
+        // Intialize Server glossary and load from file.
         glossary = new Glossary();
         glossary.load("file.txt");
+        // Initialize command parser so the server can understand commands
+        parser = new CommandParser() {
+
+            @Override
+            public void onDelete(String term) {
+                glossary.delete(term);
+            }
+
+            @Override
+            public void onUpsert(String term, String meaning) {
+                glossary.upsert(term, meaning);
+            }
+
+            @Override
+            public void onValidCommand(String command) {
+                // Redirect all commands to the clients
+                ClientHandler.sendToAll(command, null);
+            }
+        };
+        // Initialize Server Socket
         ServerSocket ss;
         try {
-            ss = new ServerSocket(3500);
+            ss = new ServerSocket(port);
         } catch (IOException ex) {
             // Failed to create ServerSocket, exiting
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
+        // Start listening for connections
         while (true) {
-            System.out.println("Awaiting a connection...");
+            System.out.println("Awaiting a connection on port " + port + "...");
             ClientHandler c = null;
             try {
                 new Thread(c = new ClientHandler(ss.accept())).start();
@@ -36,8 +60,22 @@ public class Server {
         }
     }
 
+    /**
+     * Returns the Glossary instance that this server is using.
+     *
+     * @return a Glossary instance.
+     */
     public static Glossary getGlossary() {
         return glossary;
+    }
+
+    /**
+     * Returns the CommandParser implementation that this server is using.
+     *
+     * @return a CommandParser instance/implementation.
+     */
+    public static CommandParser getCommandParser() {
+        return parser;
     }
 
 }
