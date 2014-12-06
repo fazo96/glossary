@@ -46,6 +46,8 @@ public class ClientHandler implements Runnable {
         synchronized (clients) {
             clients.add(this);
         }
+        // we have to send the glossary to the client now that he's connected
+        for(String[] s: Server.getGlossary().getCopy()) send(s[0]+":"+s[1]);
     }
 
     @Override
@@ -66,7 +68,7 @@ public class ClientHandler implements Runnable {
                 // it's not a problem if the Thread doesn't sleep correctly
             }
             if (!connected) {
-                // Stop Thread
+                // Stop Thread.
                 break;
             }
             Object o = null; // Temporary object
@@ -84,12 +86,12 @@ public class ClientHandler implements Runnable {
             if (o != null) {
                 // We received some object
                 if (o instanceof String) {
-                    // It is a String
+                    // It is a Command from the Client, so we have to execute it
                     String s = (String) o;
                     System.out.println("Received command:\n" + s + "\nFrom: "
                             + socket.getInetAddress().getHostAddress());
                     // Executing command:
-                    Server.getGlossary().upsert(s.split(":"));
+                    parseCommand(s);
                 } else {
                     // Record the event that we received an object with an
                     // unexpected Class.
@@ -99,8 +101,34 @@ public class ClientHandler implements Runnable {
                 }
             }
         }
-        // Infinite loop ended, so the client has been disconnected
+        /* Infinite loop ended, so the client has been ordered to stop network
+        activity */
         disconnect(); // Make sure disconnection is properly handled
+    }
+
+    /**
+     * Parses a command received from the Client and executes the command
+     *
+     * @param cmd the command to parse
+     * @return true if the command was valid and successful
+     */
+    private boolean parseCommand(String cmd) {
+        String[] c = cmd.split(":", 1);
+        if (c.length == 2) {
+            // Fix the first String
+            c[0] = c[0].trim().toLowerCase();
+            if(c[0].equals("delete")){
+                c[1] = c[1].trim().toLowerCase();
+                // Tell all clients that the term will be deleted
+                sendToAll("DELETE:"+c[1],this);
+                return Server.getGlossary().delete(c[1]);
+            }
+            // Tell all clients the new term
+            sendToAll(c[0]+":"+c[1],this);
+            // pass the term to the glossary
+            return Server.getGlossary().upsert(c);
+        }
+        return false;
     }
 
     /**
@@ -143,13 +171,16 @@ public class ClientHandler implements Runnable {
      * Send a message to all connected Clients.
      *
      * @param msg the message to send
-     * @return the number of client that the message has been sent to.
+     * @param exception if it's not null then this client will not receive the
+     * message
+     * @return the number of client that failed to receive the message.
      */
-    public static int sendToAll(String msg) {
+    public static int sendToAll(String msg, ClientHandler exception) {
         int i = 0;
         synchronized (clients) {
             for (ClientHandler c : clients) {
-                if (c.send(msg)) {
+                if(c == exception) continue;
+                if (!c.send(msg)) {
                     i++;
                 }
             }
@@ -179,21 +210,13 @@ public class ClientHandler implements Runnable {
             return false; // Can't send messages to disconnected clients
         }
         try {
+            // Send the string over the Socket
             oos.writeObject(msg);
         } catch (IOException ex) {
             // Send Failed
             return false;
         }
+        // Successful
         return true;
     }
-
-    /**
-     * Returns the list of clients
-     *
-     * @return a List of all connected ClientHandler instances
-     */
-    public List<ClientHandler> getClients() {
-        return clients;
-    }
-
 }
