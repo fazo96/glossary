@@ -1,5 +1,7 @@
 package gui;
 
+import javax.swing.UIManager;
+
 /**
  *
  * @author Gian
@@ -22,7 +24,7 @@ public class GUI extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         entryList = new javax.swing.JList();
-        bModify = new javax.swing.JButton();
+        bNew = new javax.swing.JButton();
         entries = new javax.swing.JLabel();
         meaning = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -50,13 +52,13 @@ public class GUI extends javax.swing.JFrame {
         entryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(entryList);
 
-        bModify.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        bModify.setText("Modify");
-        bModify.setMaximumSize(new java.awt.Dimension(65, 23));
-        bModify.setMinimumSize(new java.awt.Dimension(65, 23));
-        bModify.addActionListener(new java.awt.event.ActionListener() {
+        bNew.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        bNew.setText("Create");
+        bNew.setMaximumSize(new java.awt.Dimension(65, 23));
+        bNew.setMinimumSize(new java.awt.Dimension(65, 23));
+        bNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bModifyActionPerformed(evt);
+                bNewActionPerformed(evt);
             }
         });
 
@@ -76,6 +78,11 @@ public class GUI extends javax.swing.JFrame {
         bSave.setText("Save");
         bSave.setMaximumSize(new java.awt.Dimension(65, 23));
         bSave.setMinimumSize(new java.awt.Dimension(65, 23));
+        bSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bSaveActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -87,18 +94,17 @@ public class GUI extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(entries)
                         .addGap(135, 135, 135)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(meaning)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(bModify, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(meaning)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(bNew, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -114,7 +120,7 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(bModify, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bNew, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))
                 .addContainerGap())
@@ -178,7 +184,7 @@ public class GUI extends javax.swing.JFrame {
      * @param evt the event
      */
     private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
-        // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_exitActionPerformed
 
     /**
@@ -201,7 +207,7 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_aboutActionPerformed
 
     /**
-     * Event handler for the user manual button it opens the user manual window
+     * Event handler for the user manual button. It opens the user manual window
      *
      * @param evt
      */
@@ -211,10 +217,23 @@ public class GUI extends javax.swing.JFrame {
         }
         manualWindow.setVisible(true);
     }//GEN-LAST:event_manualActionPerformed
-
-    private void bModifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bModifyActionPerformed
+    /**
+     * Event handler for the New button. It allows the user to add a term
+     *
+     * @param evt
+     */
+    private void bNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bNewActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_bModifyActionPerformed
+    }//GEN-LAST:event_bNewActionPerformed
+    /**
+     * Event handler for the Save button. It allows the user to save the meaning
+     * he's writing.
+     *
+     * @param evt
+     */
+    private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bSaveActionPerformed
 
     /**
      * Entry point of the Client: it starts the GUI
@@ -245,6 +264,17 @@ public class GUI extends javax.swing.JFrame {
         }
         //</editor-fold>
 
+        /*
+        Setting the native OS look and feel. This way the program uses the OS's
+        window toolkit instead of the Java one to render the application, if it
+        is possible.
+        */
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ex) {
+            System.out.println("Unable to load native look and feel");
+        }
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -255,7 +285,7 @@ public class GUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem about;
-    private javax.swing.JButton bModify;
+    private javax.swing.JButton bNew;
     private javax.swing.JButton bSave;
     private javax.swing.JMenu edit;
     private javax.swing.JLabel entries;
