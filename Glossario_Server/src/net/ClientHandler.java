@@ -115,12 +115,9 @@ public class ClientHandler implements Runnable {
     private boolean parseCommand(String cmd) {
         String[] c = cmd.split(":", 1);
         if (c.length == 2) {
-            // Fix the first String
-            c[0] = c[0].trim().toLowerCase();
-            if(c[0].equals("delete")){
-                c[1] = c[1].trim().toLowerCase();
-                // Tell all clients that the term will be deleted
-                sendToAll("DELETE:"+c[1],this);
+            if(c[0].equals("DELETE")){
+                // Send the command to all other clients
+                sendToAll(cmd,this);
                 return Server.getGlossary().delete(c[1]);
             }
             // Tell all clients the new term

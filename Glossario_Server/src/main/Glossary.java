@@ -23,7 +23,7 @@ public class Glossary {
     }
 
     /**
-     * Inserts or updates (if it already existed) a term
+     * Inserts or updates (if it already existed) a term.
      *
      * @param term the term to be inserted or update in the glossary
      * @param meaning the string representing the meaning of the term
@@ -31,15 +31,17 @@ public class Glossary {
      */
     public boolean upsert(String term, String meaning) {
         int index = -1;
+        // Fix the strings
+        term = term.trim().toLowerCase();
+        meaning = meaning.trim();
+        // search if the term already exists
         if ((index = find(term)) > 0) {
             synchronized (list) {
                 list.get(index)[1] = meaning;
             }
             return true;
         }
-        String[] s = new String[2];
-        s[0] = term.trim().toLowerCase();
-        s[1] = meaning.trim();
+        String[] s = {term,meaning};
         synchronized (list) {
             list.add(s);
         }
@@ -81,6 +83,8 @@ public class Glossary {
      * @return integer representing the index of the term in the glossary
      */
     public int find(String term) {
+        // Fix the string
+        term = term.trim();
         synchronized (list) {
             for (int i = 0; i < list.size(); i++) { // Each element of the list
                 if (list.get(i)[0].equalsIgnoreCase(term)) {
