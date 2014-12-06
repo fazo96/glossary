@@ -6,13 +6,15 @@ package gui;
  */
 public class GUI extends javax.swing.JFrame {
 
+    private Manual manualWindow;
+
     /**
      * Creates the GUI
      */
     public GUI() {
         initComponents();
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -20,12 +22,12 @@ public class GUI extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         entryList = new javax.swing.JList();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        mText = new javax.swing.JTextArea();
         bModify = new javax.swing.JButton();
-        bSave = new javax.swing.JButton();
         entries = new javax.swing.JLabel();
         meaning = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        mText = new javax.swing.JTextArea();
+        bSave = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         file = new javax.swing.JMenu();
         manual = new javax.swing.JMenuItem();
@@ -38,10 +40,7 @@ public class GUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Glossary");
         setMinimumSize(new java.awt.Dimension(400, 300));
-        setResizable(false);
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
-
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         entryList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -51,7 +50,19 @@ public class GUI extends javax.swing.JFrame {
         entryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(entryList);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 120, 230));
+        bModify.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        bModify.setText("Modify");
+        bModify.setMaximumSize(new java.awt.Dimension(65, 23));
+        bModify.setMinimumSize(new java.awt.Dimension(65, 23));
+        bModify.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bModifyActionPerformed(evt);
+            }
+        });
+
+        entries.setText("Entries:");
+
+        meaning.setText("Meaning:");
 
         jScrollPane2.setMaximumSize(new java.awt.Dimension(170, 100));
         jScrollPane2.setMinimumSize(new java.awt.Dimension(170, 100));
@@ -61,21 +72,53 @@ public class GUI extends javax.swing.JFrame {
         mText.setRows(5);
         jScrollPane2.setViewportView(mText);
 
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(146, 30, 240, 200));
-
-        bModify.setText("Modify");
-        jPanel1.add(bModify, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 240, 70, -1));
-
+        bSave.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         bSave.setText("Save");
         bSave.setMaximumSize(new java.awt.Dimension(65, 23));
         bSave.setMinimumSize(new java.awt.Dimension(65, 23));
-        jPanel1.add(bSave, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 240, 80, -1));
 
-        entries.setText("Entries:");
-        jPanel1.add(entries, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 120, -1));
-
-        meaning.setText("Meaning:");
-        jPanel1.add(meaning, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 10, 70, -1));
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(entries)
+                        .addGap(135, 135, 135)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(meaning)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(bModify, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(entries)
+                    .addComponent(meaning))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(bModify, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))
+                .addContainerGap())
+        );
 
         getContentPane().add(jPanel1);
 
@@ -128,46 +171,54 @@ public class GUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+
     /**
-     * Event handler for the exit button
-     * it exits the program
+     * Event handler for the exit button it exits the program
+     *
      * @param evt the event
      */
     private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_exitActionPerformed
-    
+
     /**
-     * Event handler for the settings button
-     * it opens the settings window
-     * @param evt  
+     * Event handler for the settings button it opens the settings window
+     *
+     * @param evt
      */
     private void settingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsActionPerformed
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_settingsActionPerformed
 
     /**
-     * Event handler for the about button
-     * it opens the about window
-     * @param evt 
+     * Event handler for the about button it opens the about window
+     *
+     * @param evt
      */
     private void aboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_aboutActionPerformed
 
     /**
-     * Event handler for the user manual button
-     * it opens the user manual window
-     * @param evt 
+     * Event handler for the user manual button it opens the user manual window
+     *
+     * @param evt
      */
     private void manualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manualActionPerformed
-        // TODO add your handling code here:
+        if (manualWindow == null) {
+            manualWindow = new Manual();
+        }
+        manualWindow.setVisible(true);
     }//GEN-LAST:event_manualActionPerformed
+
+    private void bModifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bModifyActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bModifyActionPerformed
 
     /**
      * Entry point of the Client: it starts the GUI
+     *
      * @param args the command line arguments
      */
     public static void main(String args[]) {
