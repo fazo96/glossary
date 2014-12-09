@@ -19,7 +19,7 @@ import main.Server;
  */
 public class ClientHandler implements Runnable {
 
-    private static List<ClientHandler> clients;
+    private static ArrayList<ClientHandler> clients;
 
     private Socket socket;
     private ObjectInputStream ois = null;
@@ -35,7 +35,7 @@ public class ClientHandler implements Runnable {
     public ClientHandler(Socket socket) {
         this.socket = socket;
         if (clients == null) {
-            clients = Collections.synchronizedList(new ArrayList<ClientHandler>());
+            clients = new ArrayList<ClientHandler>();
         }
         try {
             oos = new ObjectOutputStream(socket.getOutputStream());

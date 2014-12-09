@@ -1,8 +1,6 @@
 package glossary;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import util.FileUtil;
 
 /**
@@ -10,11 +8,11 @@ import util.FileUtil;
  */
 public class Glossary {
 
-    private final List<String[]> list;
+    private final ArrayList<String[]> list;
 
     public Glossary() {
         // Initialize the list of glossary entries with a Thread-Safe list.
-        list = Collections.synchronizedList(new ArrayList<String[]>());
+        list = new ArrayList<String[]>();
     }
 
     /**
