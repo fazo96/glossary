@@ -14,7 +14,7 @@ public abstract class CommandParser {
      * @param command the command to execute.
      */
     public void parse(String command) {
-        String[] c = command.split(":", 1);
+        String[] c = command.split(":", 2);
         if (c.length == 2) {
             if (c[0].equals("DELETE")) {
                 // Delete a term

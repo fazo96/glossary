@@ -6,13 +6,13 @@ import javax.swing.JTextPane;
 import util.FileUtil;
 
 /**
- *
+ * The User Manual interface.
  * @author Gian
  */
 public class UserManual extends javax.swing.JFrame {
 
     /**
-     * Creates new User Manual window
+     * Creates new User Manual window.
      */
     public UserManual() {
         initComponents();

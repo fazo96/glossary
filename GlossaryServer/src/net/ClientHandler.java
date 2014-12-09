@@ -41,13 +41,14 @@ public class ClientHandler implements Runnable {
             oos = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException ex) {
             System.out.println("OutputStream init failed for " + socket.getInetAddress().getHostAddress());
+            connected = false;
             return;
         }
         synchronized (clients) {
             clients.add(this);
         }
         // we have to send the glossary to the client now that he's connected
-        for(String[] s: Server.getGlossary().getCopy()) send(s[0]+":"+s[1]);
+        sendGlossary();
     }
 
     @Override
@@ -102,8 +103,17 @@ public class ClientHandler implements Runnable {
             }
         }
         /* Infinite loop ended, so the client has been ordered to stop network
-        activity */
+         activity */
         disconnect(); // Make sure disconnection is properly handled
+    }
+
+    /**
+     * Sends entire Glossary to client.
+     */
+    public void sendGlossary() {
+        for (String s : Server.getGlossary().asString().split("\n")) {
+            send(s);
+        }
     }
 
     /**
@@ -154,7 +164,9 @@ public class ClientHandler implements Runnable {
         int i = 0;
         synchronized (clients) {
             for (ClientHandler c : clients) {
-                if(c == exception) continue;
+                if (c == exception) {
+                    continue;
+                }
                 if (!c.send(msg)) {
                     i++;
                 }

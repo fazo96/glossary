@@ -1,12 +1,17 @@
 package gui;
 
-import javax.swing.UIManager;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import main.Client;
 
 /**
  *
  * @author Gian
  */
-public class GUI extends javax.swing.JFrame {
+public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
     private UserManual manualWindow;
 
@@ -17,6 +22,8 @@ public class GUI extends javax.swing.JFrame {
         initComponents();
         // Display the window at the center of the screen (fixes error on linux)
         setLocationRelativeTo(null);
+        // Set JList selection event:
+        entryList.addListSelectionListener(this);
     }
 
     @SuppressWarnings("unchecked")
@@ -30,7 +37,7 @@ public class GUI extends javax.swing.JFrame {
         entries = new javax.swing.JLabel();
         meaning = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        mText = new javax.swing.JTextArea();
+        currentMeaning = new javax.swing.JTextArea();
         bSave = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         file = new javax.swing.JMenu();
@@ -46,11 +53,6 @@ public class GUI extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(400, 300));
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
-        entryList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         entryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(entryList);
 
@@ -72,9 +74,9 @@ public class GUI extends javax.swing.JFrame {
         jScrollPane2.setMinimumSize(new java.awt.Dimension(170, 100));
         jScrollPane2.setPreferredSize(new java.awt.Dimension(170, 100));
 
-        mText.setColumns(20);
-        mText.setRows(5);
-        jScrollPane2.setViewportView(mText);
+        currentMeaning.setColumns(20);
+        currentMeaning.setRows(5);
+        jScrollPane2.setViewportView(currentMeaning);
 
         bSave.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         bSave.setText("Save");
@@ -225,7 +227,10 @@ public class GUI extends javax.swing.JFrame {
      * @param evt
      */
     private void bNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bNewActionPerformed
-        // TODO add your handling code here:
+        String term = JOptionPane.showInputDialog("Insert term");
+        String meaning = JOptionPane.showInputDialog("Insert initial meaning");
+        if(term != null && meaning != null && term != "" && meaning != "")
+            Client.getConnection().send(term+":"+meaning);
     }//GEN-LAST:event_bNewActionPerformed
     /**
      * Event handler for the Save button. It allows the user to save the meaning
@@ -236,59 +241,45 @@ public class GUI extends javax.swing.JFrame {
     private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_bSaveActionPerformed
+    /**
+     * Recalculates the value of the current meaning
+     */
+    public void setCurrentMeaning() {
+        if (entryList.getSelectedIndex() < 0) {
+            currentMeaning.setEditable(false);
+            bSave.setEnabled(false);
+            currentMeaning.setText("Select a term");
+        } else {
+            currentMeaning.setEditable(true);
+            bSave.setEnabled(true);
+            currentMeaning.setText(Client.getGlossary().meaningOf(entryList.getSelectedIndex()));
+        }
+    }
 
     /**
-     * Entry point of the Client: it starts the GUI
+     * Returns the Text Area in which the current meaning is written
      *
-     * @param args the command line arguments
+     * @return a JTextArea
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /*
-        Setting the native OS look and feel. This way the program uses the OS's
-        window toolkit instead of the Java one to render the application, if it
-        is possible.
-        */
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ex) {
-            System.out.println("Unable to load native look and feel");
-        }
-        
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new GUI().setVisible(true);
-            }
-        });
+    public JTextArea getCurrentMeaning() {
+        return currentMeaning;
     }
+
+    /**
+     * Returns the JList with the entries of the Glossary.
+     *
+     * @return a JList
+     */
+    public JList getEntryList() {
+        return entryList;
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem about;
     private javax.swing.JButton bNew;
     private javax.swing.JButton bSave;
+    private javax.swing.JTextArea currentMeaning;
     private javax.swing.JMenu edit;
     private javax.swing.JLabel entries;
     private javax.swing.JList entryList;
@@ -299,9 +290,17 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JTextArea mText;
     private javax.swing.JMenuItem manual;
     private javax.swing.JLabel meaning;
     private javax.swing.JMenuItem settings;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    /**
+     * This function gets called when the selection of the list changes.
+     * It resets the value of the TextArea.
+     */
+    public void valueChanged(ListSelectionEvent lse) {
+       setCurrentMeaning();
+    }
 }

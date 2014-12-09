@@ -35,11 +35,13 @@ public class Server implements Runnable {
 
             @Override
             public void onDelete(String term) {
+                System.out.println("[CMD] DELETE "+term);
                 glossary.delete(term);
             }
 
             @Override
             public void onUpsert(String term, String meaning) {
+                System.out.println("[CMD] UPSERT "+term+" "+meaning);
                 glossary.upsert(term, meaning);
             }
 

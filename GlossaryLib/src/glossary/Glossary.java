@@ -125,6 +125,24 @@ public class Glossary {
     }
 
     /**
+     * Returns the meaning of the word at the given index
+     *
+     * @param index the index of the term
+     * @return the meaning of the term or null if it doesn't exist
+     */
+    public String meaningOf(int index) {
+        if (index < 0) {
+            return null;
+        }
+        synchronized (list) {
+            if (index >= list.size()) {
+                return null;
+            }
+            return list.get(index)[1];
+        }
+    }
+
+    /**
      * Deletes a term from the glossary if it exists
      *
      * @param term the term to delete
@@ -234,8 +252,27 @@ public class Glossary {
      * @return a copy of the glossary in the format of a matrix of strings.
      */
     public String[][] getCopy() {
+        String a[][] = null;
         synchronized (list) {
-            return (String[][]) list.toArray();
+            a = new String[list.size()][2];
+            for(int i=0;i<a.length;i++){
+                a[i] = list.get(i);
+            }
         }
+        return a;
+    }
+
+    /**
+     * Get an Array of the words in this Glossary.
+     *
+     * @return an array of strings.
+     */
+    public String[] getWordList() {
+        String a[] = null;
+        synchronized (list) {
+            a = new String[list.size()];
+            for(int i=0;i<a.length;i++) a[i] = list.get(i)[0];
+        }
+        return a;
     }
 }
