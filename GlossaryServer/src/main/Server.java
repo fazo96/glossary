@@ -8,12 +8,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.ClientHandler;
 
-public class Server {
+/**
+ * The Glossary Server.
+ *
+ * @author fazo
+ */
+public class Server implements Runnable {
 
     private static Glossary glossary;
     private static CommandParser parser;
-    private static int port = 4000;
+    private static final int port = 4000;
+    private static boolean listening = true;
 
+    /**
+     * Entry point of the Glossary Server
+     *
+     * @param args args are not used in this program
+     */
     public static void main(String args[]) {
         System.out.println("Glossary Server");
         // Intialize Server glossary and load from file.
@@ -38,6 +49,23 @@ public class Server {
                 ClientHandler.sendToAll(command, null);
             }
         };
+        // Start the Listener
+        //new Thread(new Server());
+        new Server().run();
+    }
+
+    /**
+     * Make default costructor private.
+     */
+    private Server() {
+
+    }
+
+    @Override
+    /**
+     * Listens for connections to the server.
+     */
+    public void run() {
         // Initialize Server Socket
         ServerSocket ss;
         try {
@@ -48,7 +76,7 @@ public class Server {
             return;
         }
         // Start listening for connections
-        while (true) {
+        while (listening) {
             System.out.println("Awaiting a connection on port " + port + "...");
             ClientHandler c = null;
             try {
