@@ -177,6 +177,15 @@ public class Glossary {
             list.clear();
         }
     }
+/**
+ * Returns the size of the Glossary
+ * @return the size of the glossary.
+ */
+    public int size() {
+        synchronized (list) {
+            return list.size();
+        }
+    }
 
     /**
      * Reads a file and loads the terms in it into the glossary.
@@ -253,7 +262,7 @@ public class Glossary {
         String a[][] = null;
         synchronized (list) {
             a = new String[list.size()][2];
-            for(int i=0;i<a.length;i++){
+            for (int i = 0; i < a.length; i++) {
                 a[i] = list.get(i);
             }
         }
@@ -269,7 +278,9 @@ public class Glossary {
         String a[] = null;
         synchronized (list) {
             a = new String[list.size()];
-            for(int i=0;i<a.length;i++) a[i] = list.get(i)[0];
+            for (int i = 0; i < a.length; i++) {
+                a[i] = list.get(i)[0];
+            }
         }
         return a;
     }

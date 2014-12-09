@@ -188,6 +188,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt the event
      */
     private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
+        
         this.dispose();
     }//GEN-LAST:event_exitActionPerformed
 
@@ -229,8 +230,9 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private void bNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bNewActionPerformed
         String term = JOptionPane.showInputDialog("Insert term");
         String meaning = JOptionPane.showInputDialog("Insert initial meaning");
-        if(term != null && meaning != null && term != "" && meaning != "")
-            Client.getConnection().send(term+":"+meaning);
+        if (term != null && meaning != null && term != "" && meaning != "") {
+            Client.getConnection().send(term + ":" + meaning);
+        }
     }//GEN-LAST:event_bNewActionPerformed
     /**
      * Event handler for the Save button. It allows the user to save the meaning
@@ -239,7 +241,15 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt
      */
     private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
-        // TODO add your handling code here:
+        if (entryList.getSelectedIndex() < 0 || entryList.getSelectedValue() == "") {
+            JOptionPane.showMessageDialog(this, "You must select a Term to save.");
+            return;
+        }
+        if (currentMeaning.getText() == "") {
+            JOptionPane.showMessageDialog(this, "Can't set an empty Meaning for a Term");
+            return;
+        }
+        Client.getConnection().send((String) entryList.getSelectedValue()+":"+currentMeaning.getText());
     }//GEN-LAST:event_bSaveActionPerformed
     /**
      * Recalculates the value of the current meaning
@@ -266,7 +276,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     }
 
     /**
-     * Returns the JList with the entries of the Glossary.
+     * Returns the JList that displays the Terms of the Glossary
      *
      * @return a JList
      */
@@ -297,10 +307,10 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
     @Override
     /**
-     * This function gets called when the selection of the list changes.
-     * It resets the value of the TextArea.
+     * This function gets called when the selection of the list changes. It
+     * resets the value of the TextArea.
      */
     public void valueChanged(ListSelectionEvent lse) {
-       setCurrentMeaning();
+        setCurrentMeaning();
     }
 }

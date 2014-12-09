@@ -23,6 +23,31 @@ public class Connection implements Runnable {
 
     public Connection(String address, int port) {
         connected = false;
+        connect(address, port);
+    }
+
+    /**
+     * Gracefully disconnets from the Server.
+     */
+    public void disconnect() {
+        connected = false;
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException ex) {
+                // Ignore exception
+            }
+        }
+    }
+
+    /**
+     * (re)Connects to given address and port
+     *
+     * @param address IP address or hostname
+     * @param port port
+     */
+    public void connect(String address, int port) {
+        disconnect(); // make sure we're disconnected
         try {
             socket = new Socket(address, port);
             oos = new ObjectOutputStream(socket.getOutputStream());
