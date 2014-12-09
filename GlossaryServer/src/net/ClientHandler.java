@@ -91,7 +91,7 @@ public class ClientHandler implements Runnable {
                     System.out.println("Received command:\n" + s + "\nFrom: "
                             + socket.getInetAddress().getHostAddress());
                     // Executing command:
-                    parseCommand(s);
+                    Server.getCommandParser().parse(s);
                 } else {
                     // Record the event that we received an object with an
                     // unexpected Class.
@@ -104,28 +104,6 @@ public class ClientHandler implements Runnable {
         /* Infinite loop ended, so the client has been ordered to stop network
         activity */
         disconnect(); // Make sure disconnection is properly handled
-    }
-
-    /**
-     * Parses a command received from the Client and executes the command
-     *
-     * @param cmd the command to parse
-     * @return true if the command was valid and successful
-     */
-    private boolean parseCommand(String cmd) {
-        String[] c = cmd.split(":", 1);
-        if (c.length == 2) {
-            if(c[0].equals("DELETE")){
-                // Send the command to all other clients
-                sendToAll(cmd,this);
-                return Server.getGlossary().delete(c[1]);
-            }
-            // Tell all clients the new term
-            sendToAll(c[0]+":"+c[1],this);
-            // pass the term to the glossary
-            return Server.getGlossary().upsert(c);
-        }
-        return false;
     }
 
     /**
