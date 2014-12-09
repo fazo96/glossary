@@ -8,13 +8,15 @@ import javax.swing.UIManager;
  */
 public class GUI extends javax.swing.JFrame {
 
-    private Manual manualWindow;
+    private UserManual manualWindow;
 
     /**
      * Creates the GUI
      */
     public GUI() {
         initComponents();
+        // Display the window at the center of the screen (fixes error on linux)
+        setLocationRelativeTo(null);
     }
 
     @SuppressWarnings("unchecked")
@@ -213,7 +215,7 @@ public class GUI extends javax.swing.JFrame {
      */
     private void manualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manualActionPerformed
         if (manualWindow == null) {
-            manualWindow = new Manual();
+            manualWindow = new UserManual();
         }
         manualWindow.setVisible(true);
     }//GEN-LAST:event_manualActionPerformed
