@@ -7,9 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import javax.swing.plaf.metal.MetalIconFactory;
 
 public class FileUtil {
 
@@ -96,12 +93,14 @@ public class FileUtil {
         }
         return folder.listFiles();
     }
+
     /**
      * Tells if a folder exists and is actually a folder.
+     *
      * @param path the path of the folder
      * @return true if it exists.
      */
-    public static boolean folderExists(String path){
+    public static boolean folderExists(String path) {
         return new File(path).isDirectory();
     }
 }

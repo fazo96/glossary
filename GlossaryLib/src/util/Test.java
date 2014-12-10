@@ -30,7 +30,8 @@ public class Test {
      * exception is thrown
      */
     private static void testGlossary() throws Exception {
-        Glossary glossary = new Glossary();
+        Glossary glossary = new Glossary("file_test.txt");
+        glossary.setAutosave(false);
         glossary.upsert("test", "nope");
         if (!glossary.meaningOf("test").equals("nope")) {
             throw new Exception("Upsert doesn't insert");
@@ -39,14 +40,20 @@ public class Test {
         if (!glossary.meaningOf("test").equals("meaning of test")) {
             throw new Exception("Upsert doesn't update");
         }
-        glossary.save("file_test.txt");
+        glossary.save();
         glossary.delete("test");
         if (glossary.termCount() != 0) {
             throw new Exception("Delete doesn't work");
         }
-        glossary.load("file_test.txt");
+        glossary.load();
         if (!glossary.meaningOf("test").equals("meaning of test")) {
             throw new Exception("Saving/Loading error");
         }
+    }
+
+    /**
+     * Make default costructor private.˙
+     */
+    private Test() {
     }
 }

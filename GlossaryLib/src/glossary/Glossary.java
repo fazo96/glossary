@@ -9,10 +9,27 @@ import util.FileUtil;
 public class Glossary {
 
     private final ArrayList<String[]> list;
+    private boolean autosave;
+    private String file;
+
+    /**
+     * Creates a new Glossary loading from given file and autosaving to it
+     *
+     * @param file the file to sync with the glossary
+     */
+    public Glossary(String file) {
+        this(); // Call other costructor
+        this.file = file;
+        this.autosave = true;
+        load(file);
+    }
 
     public Glossary() {
         // Initialize the list of glossary entries with a Thread-Safe list.
         list = new ArrayList<String[]>();
+        // Set initial vars
+        file = null;
+        autosave = false;
     }
 
     /**
@@ -33,6 +50,9 @@ public class Glossary {
                 list.get(index)[1] = meaning;
             }
             System.out.println("[Glossary] Updating meaning for " + term);
+            if (autosave) {
+                save();
+            }
             return true;
         }
         String[] s = {term, meaning};
@@ -40,6 +60,9 @@ public class Glossary {
             list.add(s);
         }
         System.out.println("[Glossary] Adding new term: " + term);
+        if (autosave) {
+            save();
+        }
         return false;
     }
 
@@ -155,6 +178,7 @@ public class Glossary {
             list.remove(index);
         }
         System.out.println("[Glossary] Deleting " + term);
+        if(autosave) save();
         return true;
     }
 
@@ -177,10 +201,12 @@ public class Glossary {
             list.clear();
         }
     }
-/**
- * Returns the size of the Glossary
- * @return the size of the glossary.
- */
+
+    /**
+     * Returns the size of the Glossary
+     *
+     * @return the size of the glossary.
+     */
     public int size() {
         synchronized (list) {
             return list.size();
@@ -193,12 +219,24 @@ public class Glossary {
      * @param filepath
      * @return -1 if there was an error,
      */
-    public int load(String filepath) {
+    private int load(String filepath) {
         String content = FileUtil.readFile(filepath);
         if (content == null) {
             return -1;
         }
         return fromString(content);
+    }
+
+    /**
+     * Reads this Glossary's file and loads the terms in it into the Glossary.
+     *
+     * @return
+     */
+    public int load() {
+        if (file == null) {
+            return -1;
+        }
+        return load(file);
     }
 
     /**
@@ -240,17 +278,22 @@ public class Glossary {
      * @param filepath the path of the file to save
      * @return true if successfull
      */
-    public boolean save(String filepath) {
-        String content = "";
-        int count = 0;
-        synchronized (list) {
-            for (String s[] : list) {
-                content += s[0] + ":" + s[1].replace('\n', ' ') + "\n";
-            }
-            count = list.size();
-        }
+    private boolean save(String filepath) {
+        String content = this.asString();
         System.out.println("[Glossary] Saving Glossary to " + filepath);
         return FileUtil.writeFile(filepath, content);
+    }
+
+    /**
+     * Saves the Glossary to this Glossary's file.
+     *
+     * @return
+     */
+    public boolean save() {
+        if (file == null) {
+            return false;
+        }
+        return save(file);
     }
 
     /**
@@ -284,4 +327,41 @@ public class Glossary {
         }
         return a;
     }
+
+    /**
+     * Wether automatically saving to file is enabled
+     *
+     * @return
+     */
+    public boolean isAutosaveOn() {
+        return autosave;
+    }
+
+    /**
+     * Set the Glossary to automatically save to its file.
+     *
+     * @param autosave if the Glossary must save automatically
+     */
+    public void setAutosave(boolean autosave) {
+        this.autosave = autosave;
+    }
+
+    /**
+     * Returns this glossary's file
+     *
+     * @return this glossary's file
+     */
+    public String getFile() {
+        return file;
+    }
+
+    /**
+     * Sets this glossary's file
+     *
+     * @param file path to a file
+     */
+    public void setFile(String file) {
+        this.file = file;
+    }
+
 }

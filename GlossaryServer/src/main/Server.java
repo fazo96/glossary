@@ -28,8 +28,7 @@ public class Server implements Runnable {
     public static void main(String args[]) {
         System.out.println("Glossary Server");
         // Intialize Server glossary and load from file.
-        glossary = new Glossary();
-        glossary.load("file.txt");
+        glossary = new Glossary("file.txt");
         // Initialize command parser so the server can understand commands
         parser = new CommandParser() {
 
