@@ -49,6 +49,11 @@ public class Test {
         if (!glossary.meaningOf("test").equals("meaning of test")) {
             throw new Exception("Saving/Loading error");
         }
+        glossary.upsert("tast","maning af tast");
+        if(glossary.getWordList().length != 2)
+            throw new Exception("Word list error");
+        if(glossary.getWordList("ta").length != 1)
+            throw new Exception("Filter error");
     }
 
     /**

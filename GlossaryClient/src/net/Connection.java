@@ -48,17 +48,19 @@ public class Connection implements Runnable {
      *
      * @param address IP address or hostname
      * @param port port
+     * @return true if successful
      */
-    public void connect(String address, int port) {
+    public boolean connect(String address, int port) {
         this.address = address;
         this.port = port;
-        connect();
+        return connect();
     }
 
     /**
      * Connects to the last address and port provided.
+     * @return true if successful
      */
-    public void connect() {
+    public boolean connect() {
         disconnect(); // make sure we're disconnected
         try {
             socket = new Socket(address, port);
@@ -66,10 +68,12 @@ public class Connection implements Runnable {
         } catch (IOException ex) {
             System.out.println("Could not connect to " + address + ":" + port);
             JOptionPane.showMessageDialog(null, "Could not connect to " + address + ":" + port);
-            return;
+            connected = false;
+            return connected;
         }
         connected = true;
         new Thread(this).start();
+        return connected;
     }
 
     /**

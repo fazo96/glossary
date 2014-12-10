@@ -38,7 +38,7 @@ public class Client {
             @Override
             public void onValidCommand(String command) {
                 // After every valid command, update the list
-                gui.setEntryListData(glossary.getSortedWordList());
+                gui.updateTermList();
             }
 
             @Override

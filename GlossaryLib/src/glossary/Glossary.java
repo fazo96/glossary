@@ -336,16 +336,21 @@ public class Glossary {
     public String[] getWordList(String filter) {
         Object[] ol;
         synchronized (list) {
-            // Filter all the words
-            ol = list.stream()
-                    .filter(
-                            (String[] s) -> s[0].contains(filter) || filter == null
-                    ).toArray();
+            if (filter == null) {
+                ol = list.toArray();
+            } else {
+                // Filter all the words
+                ol = list.stream()
+                        .filter(
+                                (String[] s)
+                                -> filter == null || (s[0] != null && s[0].contains(filter))
+                        ).toArray();
+            }
         }
-        // Convert array
+        // Convert the Array
         String a[] = new String[ol.length];
         for (int i = 0; i < a.length; i++) {
-            a[i] = (String) ol[i];
+            a[i] = ((String[]) ol[i])[0];
         }
         return a;
     }
