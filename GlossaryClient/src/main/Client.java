@@ -28,17 +28,33 @@ public class Client {
         } catch (Exception ex) {
             System.out.println("Unable to load native look and feel");
         }
-        glossary = new Glossary();
-        // Start GUI
-        gui = new GUI();
-        gui.setVisible(true);
-        // Configure parser to execute server commands
+        /**
+         * Configure Event handlers: when the Glossary is changed, the change is
+         * sent to the server and displayed in the GUI.
+         */
+        glossary = new Glossary() {
+
+            @Override
+            public void onDelete(String term) {
+                connection.send("DELETE:" + term);
+                Client.getGui().updateTermList();
+                Client.getGui().resetCurrentMeaning();
+            }
+
+            @Override
+            public void onUpsert(String term, String meaning) {
+                connection.send(term + ":" + meaning);
+                Client.getGui().updateTermList();
+                Client.getGui().resetCurrentMeaning();
+            }
+
+        };
+        // Configure parser to execute commands coming from the server
         parser = new CommandParser() {
 
             @Override
             public void onValidCommand(String command) {
-                // After every valid command, update the list
-                gui.updateTermList();
+                // This is not needed
             }
 
             @Override
@@ -51,8 +67,12 @@ public class Client {
                 glossary.upsert(term, meaning);
             }
         };
-        // Connect to server
+        // Prepare connection object so it's not null
         connection = new Connection("localhost", 4000);
+        // Start GUI
+        gui = new GUI();
+        gui.setVisible(true);
+
     }
 
     public static GUI getGui() {

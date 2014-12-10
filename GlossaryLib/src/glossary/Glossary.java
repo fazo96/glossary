@@ -59,10 +59,15 @@ public class Glossary {
         meaning = meaning.trim();
         // search if the term already exists
         if ((index = find(term)) >= 0) {
+            if (meaningOf(index).equals(meaning)) {
+                // The term to upsert is exactly the same in the Glossary!
+                return true;
+            }
             synchronized (list) {
                 list.get(index)[1] = meaning;
             }
             System.out.println("[Glossary] Updating meaning for " + term);
+            onUpsert(term, meaning);
             if (autosave) {
                 save();
             }
@@ -73,6 +78,7 @@ public class Glossary {
             list.add(s);
         }
         System.out.println("[Glossary] Adding new term: " + term);
+        onUpsert(term, meaning);
         if (autosave) {
             save();
         }
@@ -142,6 +148,18 @@ public class Glossary {
     }
 
     /**
+     * Returns the record at the given index
+     *
+     * @param index the index of the record to get
+     * @return the resulting record or null if it doesn't exist
+     */
+    public String[] find(int index) {
+        synchronized (list) {
+            return list.get(index);
+        }
+    }
+
+    /**
      * Returns the meaning of the given term
      *
      * @param term a string
@@ -150,12 +168,7 @@ public class Glossary {
      */
     public String meaningOf(String term) {
         int i = find(term);
-        if (i < 0) {
-            return null;
-        }
-        synchronized (list) {
-            return list.get(i)[1];
-        }
+        return meaningOf(i);
     }
 
     /**
@@ -215,6 +228,7 @@ public class Glossary {
         synchronized (list) {
             list.clear();
         }
+        onClear();
     }
 
     /**
@@ -428,5 +442,31 @@ public class Glossary {
         synchronized (list) {
             list.sort(comparator);
         }
+    }
+
+    /**
+     * This method is called when a term is upserted to the Glossary.
+     *
+     * @param term the term that was upserted
+     * @param meaning the meaning of the upserted term
+     */
+    public void onUpsert(String term, String meaning) {
+        // This method is created to be overridden.
+    }
+
+    /**
+     * This method is called when a term is deleted from the Glossary.
+     *
+     * @param term the term that was deleted
+     */
+    public void onDelete(String term) {
+        // This method is created to be overridden.
+    }
+
+    /**
+     * This method is called when the glossary is cleared.
+     */
+    public void onClear() {
+        // This method is created to be overridden.}
     }
 }

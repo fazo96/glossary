@@ -1,10 +1,7 @@
 package gui;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
 import javax.swing.JFileChooser;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
@@ -138,6 +135,14 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         search.setFont(new java.awt.Font("Segoe UI", 2, 10)); // NOI18N
         search.setForeground(new java.awt.Color(153, 153, 153));
         search.setText("Search...");
+        search.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                searchFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                searchFocusLost(evt);
+            }
+        });
         search.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchActionPerformed(evt);
@@ -331,7 +336,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         String term = JOptionPane.showInputDialog("Insert term");
         String meaning = JOptionPane.showInputDialog("Insert initial meaning");
         if (term != null && meaning != null && term != "" && meaning != "") {
-            Client.getConnection().send(term + ":" + meaning);
+            // Upsert to glossary.
+            Client.getGlossary().upsert(term, meaning);
         }
     }//GEN-LAST:event_bNewActionPerformed
     /**
@@ -349,7 +355,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             JOptionPane.showMessageDialog(this, "Can't set an empty Meaning for a Term");
             return;
         }
-        Client.getConnection().send((String) entryList.getSelectedValue() + ":" + currentMeaning.getText());
+        // Upsert to glossary
+        Client.getGlossary().upsert((String) entryList.getSelectedValue(), currentMeaning.getText());
     }//GEN-LAST:event_bSaveActionPerformed
     /**
      * Event handler for the Connect/Disconnect button. It connects or
@@ -377,17 +384,39 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         JFileChooser fc = new JFileChooser();
         fc.showOpenDialog(this);
         fc.setMultiSelectionEnabled(true);
-        for (File f : fc.getSelectedFiles())
-            for (String s : FileUtil.readFile(f).split("\n"))
-                Client.getConnection().send(s);
+        for (File f : fc.getSelectedFiles()) // Import from string
+        {
+            Client.getGlossary().fromString(FileUtil.readFile(f));
+        }
     }//GEN-LAST:event_bImportActionPerformed
 
     private void bExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExportActionPerformed
         JFileChooser fc = new JFileChooser();
         fc.showSaveDialog(this);
-        for (String s : FileUtil.readFile(fc.getSelectedFile()).split("\n"))
-            Client.getConnection().send(s);
+        FileUtil.writeFile(fc.getSelectedFile(), Client.getGlossary().asString());
     }//GEN-LAST:event_bExportActionPerformed
+    /**
+     * When the search box gains focus, if it's displaying the default text then
+     * clear it
+     *
+     * @param evt
+     */
+    private void searchFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchFocusGained
+        if (search.getText().equals(defaultSearchFieldValue)) {
+            search.setText("");
+        }
+    }//GEN-LAST:event_searchFocusGained
+    /**
+     * When the search box loses focus, if it's empty then put the default value
+     * back in
+     *
+     * @param evt
+     */
+    private void searchFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchFocusLost
+        if (search.getText().equals("")) {
+            search.setText(defaultSearchFieldValue);
+        }
+    }//GEN-LAST:event_searchFocusLost
     /**
      * Recalculates the value of the current meaning in the text area
      */
@@ -399,7 +428,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         } else {
             currentMeaning.setEditable(true);
             bSave.setEnabled(true);
-            currentMeaning.setText(Client.getGlossary().meaningOf(entryList.getSelectedIndex()));
+            currentMeaning.setText(Client.getGlossary().meaningOf((String) entryList.getSelectedValue()));
         }
     }
 
