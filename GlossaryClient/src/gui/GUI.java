@@ -399,27 +399,39 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_searchActionPerformed
-
+    /**
+     * Event handler for Import button. It imports records from a file into the
+     * Glossary.
+     *
+     * @param evt the event
+     */
     private void bImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bImportActionPerformed
         JFileChooser fc = new JFileChooser();
-        fc.showOpenDialog(this);
         fc.setMultiSelectionEnabled(true);
-        for (File f : fc.getSelectedFiles()) // Import from string
-        {
-            Client.getGlossary().fromString(FileUtil.readFile(f));
+        if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            for (File f : fc.getSelectedFiles()) // Import from string
+            {
+                Client.getGlossary().fromString(FileUtil.readFile(f));
+            }
         }
     }//GEN-LAST:event_bImportActionPerformed
-
+    /**
+     * Event handler for the Export button. It exports records from a file into
+     * the Glossary
+     *
+     * @param evt the event
+     */
     private void bExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExportActionPerformed
         JFileChooser fc = new JFileChooser();
-        fc.showSaveDialog(this);
-        FileUtil.writeFile(fc.getSelectedFile(), Client.getGlossary().asString());
+        if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            FileUtil.writeFile(fc.getSelectedFile(), Client.getGlossary().asString());
+        }
     }//GEN-LAST:event_bExportActionPerformed
     /**
      * When the search box gains focus, if it's displaying the default text then
      * clear it
      *
-     * @param evt
+     * @param evt the event
      */
     private void searchFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchFocusGained
         if (search.getText().equals(defaultSearchFieldValue)) {
