@@ -437,6 +437,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private void searchFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchFocusLost
         if (search.getText().equals("")) {
             search.setText(defaultSearchFieldValue);
+            search.setFont(new Font("Segoe UI", Font.ITALIC, 10));
+            search.setForeground(Color.GRAY);
         }
     }//GEN-LAST:event_searchFocusLost
 
