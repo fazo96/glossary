@@ -203,6 +203,7 @@ public class Glossary {
             list.remove(index);
         }
         System.out.println("[Glossary] Deleting " + term);
+        onDelete(term);
         if (autosave) {
             save();
         }

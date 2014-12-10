@@ -123,6 +123,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         jScrollPane2.setMinimumSize(new java.awt.Dimension(170, 100));
         jScrollPane2.setPreferredSize(new java.awt.Dimension(170, 100));
 
+        currentMeaning.setEditable(false);
         currentMeaning.setColumns(20);
         currentMeaning.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         currentMeaning.setRows(5);
@@ -130,6 +131,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
         bSave.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         bSave.setText("Save");
+        bSave.setEnabled(false);
         bSave.setMaximumSize(new java.awt.Dimension(65, 23));
         bSave.setMinimumSize(new java.awt.Dimension(65, 23));
         bSave.addActionListener(new java.awt.event.ActionListener() {
@@ -157,6 +159,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
         bDelete.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         bDelete.setText("Delete");
+        bDelete.setEnabled(false);
         bDelete.setMaximumSize(new java.awt.Dimension(75, 23));
         bDelete.setMinimumSize(new java.awt.Dimension(75, 23));
         bDelete.setPreferredSize(new java.awt.Dimension(75, 23));
@@ -354,8 +357,11 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      */
     private void bNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bNewActionPerformed
         String term = JOptionPane.showInputDialog("Insert term");
+        if (term == null || term.equals("")) {
+            return;
+        }
         String meaning = JOptionPane.showInputDialog("Insert initial meaning");
-        if (term != null && meaning != null && term != "" && meaning != "") {
+        if (meaning != null && !meaning.equals("")) {
             // Upsert to glossary.
             Client.getGlossary().upsert(term, meaning);
         }
@@ -453,9 +459,13 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             search.setForeground(Color.GRAY);
         }
     }//GEN-LAST:event_searchFocusLost
-
+    /**
+     * Event handler for delete button. It deletes the record from the Glossary.
+     *
+     * @param evt the event
+     */
     private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
-        // TODO add your handling code here:
+        Client.getGlossary().delete((String) entryList.getSelectedValue());
     }//GEN-LAST:event_bDeleteActionPerformed
     /**
      * Recalculates the value of the current meaning in the text area
@@ -464,11 +474,13 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         if (entryList.getSelectedIndex() < 0) {
             currentMeaning.setEditable(false);
             bSave.setEnabled(false);
+            bDelete.setEnabled(false);
             currentMeaning.setText("Select a term");
         } else {
+            currentMeaning.setText(Client.getGlossary().meaningOf((String) entryList.getSelectedValue()));
             currentMeaning.setEditable(true);
             bSave.setEnabled(true);
-            currentMeaning.setText(Client.getGlossary().meaningOf((String) entryList.getSelectedValue()));
+            bDelete.setEnabled(true);
         }
     }
 
