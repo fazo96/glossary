@@ -50,7 +50,7 @@ public class Glossary {
      *
      * @param term the term to be inserted or update in the glossary
      * @param meaning the string representing the meaning of the term
-     * @return true if the term existed before.
+     * @return true if there was a change in the glossary.
      */
     public boolean upsert(String term, String meaning) {
         int index = -1;
@@ -58,31 +58,27 @@ public class Glossary {
         term = term.trim().toLowerCase();
         meaning = meaning.trim();
         // search if the term already exists
-        if ((index = find(term)) >= 0) {
+        if ((index = find(term)) >= 0) { // Existing term
             if (meaningOf(index).equals(meaning)) {
                 // The term to upsert is exactly the same in the Glossary!
-                return true;
+                return false;
             }
             synchronized (list) {
                 list.get(index)[1] = meaning;
             }
             System.out.println("[Glossary] Updating meaning for " + term);
-            onUpsert(term, meaning);
-            if (autosave) {
-                save();
+        } else { // New term
+            String[] s = {term, meaning};
+            synchronized (list) {
+                list.add(s);
             }
-            return true;
+            System.out.println("[Glossary] Adding new term: " + term);
         }
-        String[] s = {term, meaning};
-        synchronized (list) {
-            list.add(s);
-        }
-        System.out.println("[Glossary] Adding new term: " + term);
         onUpsert(term, meaning);
         if (autosave) {
             save();
         }
-        return false;
+        return true;
     }
 
     /**
@@ -90,7 +86,7 @@ public class Glossary {
      * meaning.
      *
      * @param toParse
-     * @return true if it was a parseable string.
+     * @return true if there was a change in the glossary.
      */
     public boolean upsert(String toParse) {
         String s[] = toParse.split(":", 2);
@@ -105,15 +101,13 @@ public class Glossary {
      * two strings)
      *
      * @param record the record to "upsert" to the list
-     * @return false if the length of the array is != 2 and the term wasn't
-     * inserted
+     * @return true if there was a change in the glossary.
      */
     public boolean upsert(String[] record) {
         if (record.length != 2) {
             return false;
         }
-        upsert(record[0], record[1]);
-        return true;
+        return upsert(record[0], record[1]);
     }
 
     /**
@@ -121,11 +115,16 @@ public class Glossary {
      * calls Upsert on every one of them.
      *
      * @param records the array of records to "upsert" to the list
+     * @return true if there was a change in the glossary.
      */
-    public void upsert(String[][] records) {
+    public boolean upsert(String[][] records) {
+        boolean ret = false;
         for (String[] record : records) {
-            upsert(record);
+            if (upsert(record)) {
+                ret = true;
+            }
         }
+        return ret;
     }
 
     /**

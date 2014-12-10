@@ -28,26 +28,32 @@ public class Server implements Runnable {
     public static void main(String args[]) {
         System.out.println("Glossary Server");
         // Intialize Server glossary and load from file.
-        glossary = new Glossary("file.txt");
+        glossary = new Glossary("glossary.txt") {
+
+            @Override
+            public void onDelete(String term) {
+                ClientHandler.sendToAll("DELETE:" + term, null);
+            }
+
+            @Override
+            public void onUpsert(String term, String meaning) {
+                ClientHandler.sendToAll(term + ":" + meaning, null);
+            }
+
+        };
         // Initialize command parser so the server can understand commands
         parser = new CommandParser() {
 
             @Override
             public void onDelete(String term) {
-                System.out.println("[CMD] DELETE "+term);
+                System.out.println("[CMD] DELETE " + term);
                 glossary.delete(term);
             }
 
             @Override
             public void onUpsert(String term, String meaning) {
-                System.out.println("[CMD] UPSERT "+term+" "+meaning);
+                System.out.println("[CMD] UPSERT " + term + " " + meaning);
                 glossary.upsert(term, meaning);
-            }
-
-            @Override
-            public void onValidCommand(String command) {
-                // Redirect all commands to the clients
-                ClientHandler.sendToAll(command, null);
             }
         };
         // Start the Listener

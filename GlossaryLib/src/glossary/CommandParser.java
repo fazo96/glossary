@@ -23,17 +23,8 @@ public abstract class CommandParser {
                 // Upsert a term and its meaning
                 onUpsert(c[0].trim().toLowerCase(), c[1].trim());
             }
-            onValidCommand(command);
         }
     }
-
-    /**
-     * This function is called after other event functions when a valid command
-     * is received from a client
-     *
-     * @param command the command issued that was valid
-     */
-    public abstract void onValidCommand(String command);
 
     /**
      * This function is called when the CommandParser was asked to parse a

@@ -53,11 +53,6 @@ public class Client {
         parser = new CommandParser() {
 
             @Override
-            public void onValidCommand(String command) {
-                // This is not needed
-            }
-
-            @Override
             public void onDelete(String term) {
                 glossary.delete(term);
             }
@@ -68,7 +63,16 @@ public class Client {
             }
         };
         // Prepare connection object so it's not null
-        connection = new Connection("localhost", 4000);
+        connection = new Connection("localhost", 4000) {
+
+            @Override
+            public void onFirstMessageAlreadyReceived() {
+                for (String s : glossary.asString().split("\n")) {
+                    send(s);
+                }
+            }
+
+        };
         // Start GUI
         gui = new GUI();
         gui.setVisible(true);

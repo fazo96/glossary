@@ -21,12 +21,12 @@ public class Connection implements Runnable {
     private ObjectOutputStream oos;
     private String address;
     private int port;
+    private boolean firstMessageAlreadyReceived;
 
     public Connection(String address, int port) {
         connected = false;
         this.address = address;
         this.port = port;
-        //connect(address, port);
     }
 
     /**
@@ -58,6 +58,7 @@ public class Connection implements Runnable {
 
     /**
      * Connects to the last address and port provided.
+     *
      * @return true if successful
      */
     public boolean connect() {
@@ -72,6 +73,7 @@ public class Connection implements Runnable {
             return connected;
         }
         connected = true;
+        firstMessageAlreadyReceived = false;
         new Thread(this).start();
         return connected;
     }
@@ -139,6 +141,11 @@ public class Connection implements Runnable {
                     System.out.println("Received command:\n" + s);
                     // Executing command:
                     Client.getParser().parse(s);
+                    if (firstMessageAlreadyReceived == false) {
+                        // We received the first message, so...
+                        firstMessageAlreadyReceived = true;
+                        onFirstMessageAlreadyReceived();
+                    }
                 } else {
                     // Record the event that we received an object with an
                     // unexpected Class.
@@ -151,6 +158,23 @@ public class Connection implements Runnable {
 
     public boolean isConnected() {
         return connected;
+    }
+
+    /**
+     * True if since the last connection at least 1 message has been received.
+     *
+     * @return a boolean
+     */
+    public boolean firstMessageAlreadyReceived() {
+        return firstMessageAlreadyReceived;
+    }
+
+    /**
+     * Called just after the first message from this session with the server
+     * has been received
+     */
+    public void onFirstMessageAlreadyReceived() {
+        // This method exists to be overridden
     }
 
 }
