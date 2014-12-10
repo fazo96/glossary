@@ -424,10 +424,9 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private void searchFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchFocusGained
         if (search.getText().equals(defaultSearchFieldValue)) {
             search.setText("");
+            search.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+            search.setForeground(Color.BLACK);
         }
-        search.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        search.setForeground(Color.BLACK);
-        
     }//GEN-LAST:event_searchFocusGained
     /**
      * When the search box loses focus, if it's empty then put the default value
