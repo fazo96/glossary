@@ -17,6 +17,9 @@ public class FileUtil {
      * @return the content of the file as a String
      */
     public static String readFile(File file) {
+        if (file == null) {
+            return "";
+        }
         BufferedReader bf;
         try {
             // Initialize File Reader object
@@ -59,6 +62,18 @@ public class FileUtil {
      */
     public static boolean writeFile(String path, String content) {
         File file = new File(path);
+        return writeFile(file, content);
+    }
+
+    /**
+     * Writes the given string to the file replacing its content
+     *
+     * @param file the file to write
+     * @param content the content to write in the file
+     * @return true is successful, false otherwise
+     */
+    public static boolean writeFile(File file, String content) {
+        if(file == null) return false;
         FileWriter fw = null;
         try {
             fw = new FileWriter(file);

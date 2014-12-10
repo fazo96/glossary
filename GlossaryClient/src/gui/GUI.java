@@ -1,7 +1,9 @@
 package gui;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
+import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
@@ -10,6 +12,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import main.Client;
+import util.FileUtil;
 
 /**
  * Main User Interface of the Glossary
@@ -81,6 +84,9 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         manual = new javax.swing.JMenuItem();
         about = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        bImport = new javax.swing.JMenuItem();
+        bExport = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         exit = new javax.swing.JMenuItem();
         edit = new javax.swing.JMenu();
         settings = new javax.swing.JMenuItem();
@@ -203,6 +209,25 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         });
         file.add(about);
         file.add(jSeparator1);
+
+        bImport.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
+        bImport.setText("Import");
+        bImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bImportActionPerformed(evt);
+            }
+        });
+        file.add(bImport);
+
+        bExport.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        bExport.setText("Export");
+        bExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bExportActionPerformed(evt);
+            }
+        });
+        file.add(bExport);
+        file.add(jSeparator2);
 
         exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
         exit.setText("Exit");
@@ -347,6 +372,22 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_searchActionPerformed
+
+    private void bImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bImportActionPerformed
+        JFileChooser fc = new JFileChooser();
+        fc.showOpenDialog(this);
+        fc.setMultiSelectionEnabled(true);
+        for (File f : fc.getSelectedFiles())
+            for (String s : FileUtil.readFile(f).split("\n"))
+                Client.getConnection().send(s);
+    }//GEN-LAST:event_bImportActionPerformed
+
+    private void bExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExportActionPerformed
+        JFileChooser fc = new JFileChooser();
+        fc.showSaveDialog(this);
+        for (String s : FileUtil.readFile(fc.getSelectedFile()).split("\n"))
+            Client.getConnection().send(s);
+    }//GEN-LAST:event_bExportActionPerformed
     /**
      * Recalculates the value of the current meaning in the text area
      */
@@ -374,6 +415,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem about;
+    private javax.swing.JMenuItem bExport;
+    private javax.swing.JMenuItem bImport;
     private javax.swing.JButton bNew;
     private javax.swing.JButton bSave;
     private javax.swing.JTextArea currentMeaning;
@@ -387,6 +430,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JMenuItem manual;
     private javax.swing.JLabel meaning;
     private javax.swing.JMenuItem net;
