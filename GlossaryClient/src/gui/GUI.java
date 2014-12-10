@@ -10,6 +10,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import main.Client;
 import util.FileUtil;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
 
 /**
  * Main User Interface of the Glossary
@@ -95,6 +98,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         setTitle("Glossary");
         setMinimumSize(new java.awt.Dimension(400, 300));
 
+        entryList.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         entryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(entryList);
 
@@ -120,6 +124,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         jScrollPane2.setPreferredSize(new java.awt.Dimension(170, 100));
 
         currentMeaning.setColumns(20);
+        currentMeaning.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         currentMeaning.setRows(5);
         jScrollPane2.setViewportView(currentMeaning);
 
@@ -420,6 +425,9 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         if (search.getText().equals(defaultSearchFieldValue)) {
             search.setText("");
         }
+        search.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        search.setForeground(Color.BLACK);
+        
     }//GEN-LAST:event_searchFocusGained
     /**
      * When the search box loses focus, if it's empty then put the default value
