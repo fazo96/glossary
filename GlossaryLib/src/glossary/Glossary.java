@@ -1,6 +1,7 @@
 package glossary;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 import util.FileUtil;
 
 /**
@@ -178,7 +179,9 @@ public class Glossary {
             list.remove(index);
         }
         System.out.println("[Glossary] Deleting " + term);
-        if(autosave) save();
+        if (autosave) {
+            save();
+        }
         return true;
     }
 
@@ -324,6 +327,26 @@ public class Glossary {
             for (int i = 0; i < a.length; i++) {
                 a[i] = list.get(i)[0];
             }
+        }
+        return a;
+    }
+
+    /**
+     * Get an Array of the words in this Glossary filtered by the given String
+     *
+     * @param filter the filter to find the words
+     * @return the words found
+     */
+    public String[] getWordList(String filter) {
+        Object[] ol;
+        synchronized (list) {
+            // Filter all the words
+            ol = list.stream().filter((String[] s) -> s[0].contains(filter)).toArray();
+        }
+        // Convert array
+        String a[] = new String[ol.length];
+        for (int i = 0; i < a.length; i++) {
+            a[i] = (String) ol[i];
         }
         return a;
     }
