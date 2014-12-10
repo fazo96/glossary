@@ -1,13 +1,16 @@
 package glossary;
 
 import java.util.ArrayList;
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.Comparator;
 import util.FileUtil;
 
 /**
  * This object represents a Glossary
  */
 public class Glossary {
+
+    private static Comparator<String[]> comparator;
 
     private final ArrayList<String[]> list;
     private boolean autosave;
@@ -26,6 +29,15 @@ public class Glossary {
     }
 
     public Glossary() {
+        if (comparator == null) {
+            // Initialize the comparator to sort the Glossary
+            comparator = new Comparator<String[]>() {
+                @Override
+                public int compare(String[] o1, String[] o2) {
+                    return o1[0].compareTo(o2[0]);
+                }
+            };
+        }
         // Initialize the list of glossary entries with a Thread-Safe list.
         list = new ArrayList<String[]>();
         // Set initial vars
@@ -316,22 +328,6 @@ public class Glossary {
     }
 
     /**
-     * Get an Array of the words in this Glossary.
-     *
-     * @return an array of strings.
-     */
-    public String[] getWordList() {
-        String a[] = null;
-        synchronized (list) {
-            a = new String[list.size()];
-            for (int i = 0; i < a.length; i++) {
-                a[i] = list.get(i)[0];
-            }
-        }
-        return a;
-    }
-
-    /**
      * Get an Array of the words in this Glossary filtered by the given String
      *
      * @param filter the filter to find the words
@@ -341,7 +337,10 @@ public class Glossary {
         Object[] ol;
         synchronized (list) {
             // Filter all the words
-            ol = list.stream().filter((String[] s) -> s[0].contains(filter)).toArray();
+            ol = list.stream()
+                    .filter(
+                            (String[] s) -> s[0].contains(filter) || filter == null
+                    ).toArray();
         }
         // Convert array
         String a[] = new String[ol.length];
@@ -352,9 +351,39 @@ public class Glossary {
     }
 
     /**
-     * Wether automatically saving to file is enabled
+     * Like getWordList(filter) but sorted alphabetically.
      *
-     * @return
+     * @param filter the filter to find the words
+     * @return a sorted array of the words found
+     */
+    public String[] getSortedWordList(String filter) {
+        String s[] = getWordList(filter);
+        Arrays.sort(s);
+        return s;
+    }
+
+    /**
+     * Get an Array of the words in this Glossary.
+     *
+     * @return an array of strings.
+     */
+    public String[] getWordList() {
+        return getWordList(null);
+    }
+
+    /**
+     * Like getWordList() but sorted alphabetically.
+     *
+     * @return an array of the words found
+     */
+    public String[] getSortedWordList() {
+        return getSortedWordList(null);
+    }
+
+    /**
+     * Wether automatically saving to file is enabled.
+     *
+     * @return true if enabled
      */
     public boolean isAutosaveOn() {
         return autosave;
@@ -387,4 +416,12 @@ public class Glossary {
         this.file = file;
     }
 
+    /**
+     * Sorts the Glossary by term name.
+     */
+    public void sort() {
+        synchronized (list) {
+            list.sort(comparator);
+        }
+    }
 }

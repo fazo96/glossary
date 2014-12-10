@@ -1,5 +1,7 @@
 package gui;
 
+import java.util.Arrays;
+import java.util.Collections;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
@@ -8,11 +10,12 @@ import javax.swing.event.ListSelectionListener;
 import main.Client;
 
 /**
+ * Main User Interface of the Glossary
  *
  * @author Gian
  */
 public class GUI extends javax.swing.JFrame implements ListSelectionListener {
-    
+
     private UserManual manualWindow;
     private About aboutWindow;
 
@@ -26,7 +29,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         // Set JList selection event:
         entryList.addListSelectionListener(this);
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -226,24 +229,22 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt the event
      */
     private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
-        
         this.dispose();
     }//GEN-LAST:event_exitActionPerformed
 
     /**
      * Event handler for the settings button it opens the settings window
      *
-     * @param evt
+     * @param evt the event
      */
     private void settingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsActionPerformed
         // TODO add your handling code here:
-
     }//GEN-LAST:event_settingsActionPerformed
 
     /**
      * Event handler for the about button it opens the about window
      *
-     * @param evt
+     * @param evt the event
      */
     private void aboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutActionPerformed
         if (aboutWindow == null) {
@@ -255,7 +256,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     /**
      * Event handler for the user manual button. It opens the user manual window
      *
-     * @param evt
+     * @param evt the event
      */
     private void manualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manualActionPerformed
         if (manualWindow == null) {
@@ -266,7 +267,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     /**
      * Event handler for the New button. It allows the user to add a term
      *
-     * @param evt
+     * @param evt the event
      */
     private void bNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bNewActionPerformed
         String term = JOptionPane.showInputDialog("Insert term");
@@ -279,7 +280,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * Event handler for the Save button. It allows the user to save the meaning
      * he's writing.
      *
-     * @param evt
+     * @param evt the event
      */
     private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
         if (entryList.getSelectedIndex() < 0 || entryList.getSelectedValue() == "") {
@@ -292,22 +293,28 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         }
         Client.getConnection().send((String) entryList.getSelectedValue() + ":" + currentMeaning.getText());
     }//GEN-LAST:event_bSaveActionPerformed
-
+    /**
+     * Event handler for the Connect/Disconnect button. It connects or
+     * disconnects from the Server.
+     *
+     * @param evt the event
+     */
     private void netActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_netActionPerformed
         Client.getConnection().connect();
-        if(Client.getConnection().isConnected())
+        if (Client.getConnection().isConnected()) {
             Client.getConnection().disconnect();
-        else
+        } else {
             Client.getConnection().connect();
+        }
     }//GEN-LAST:event_netActionPerformed
 
     private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_searchActionPerformed
     /**
-     * Recalculates the value of the current meaning
+     * Recalculates the value of the current meaning in the text area
      */
-    public void setCurrentMeaning() {
+    public void resetCurrentMeaning() {
         if (entryList.getSelectedIndex() < 0) {
             currentMeaning.setEditable(false);
             bSave.setEnabled(false);
@@ -329,12 +336,13 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     }
 
     /**
-     * Returns the JList that displays the Terms of the Glossary
+     * Sets the List of terms to the values of the Strings in the given array
+     * after reordering them.
      *
-     * @return a JList
+     * @param list the array of strings to set as values.
      */
-    public JList getEntryList() {
-        return entryList;
+    public void setEntryListData(String[] list) {
+        entryList.setListData(list);
     }
 
 
@@ -367,6 +375,6 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * resets the value of the TextArea.
      */
     public void valueChanged(ListSelectionEvent lse) {
-        setCurrentMeaning();
+        resetCurrentMeaning();
     }
 }

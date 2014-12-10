@@ -11,18 +11,18 @@ import net.Connection;
  * @author fazo
  */
 public class Client {
-    
+
     private static GUI gui;
     private static CommandParser parser;
     private static Connection connection;
     private static Glossary glossary;
-    
-    public static void main(String args[]){
+
+    public static void main(String args[]) {
         /*
-        Setting the native OS look and feel. This way the program uses the OS's
-        window toolkit instead of the Java one to render the application, if it
-        is possible.
-        */
+         Setting the native OS look and feel. This way the program uses the OS's
+         window toolkit instead of the Java one to render the application, if it
+         is possible.
+         */
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
@@ -30,14 +30,15 @@ public class Client {
         }
         glossary = new Glossary();
         // Start GUI
-        gui = new GUI(); gui.setVisible(true);
+        gui = new GUI();
+        gui.setVisible(true);
         // Configure parser to execute server commands
         parser = new CommandParser() {
 
             @Override
             public void onValidCommand(String command) {
                 // After every valid command, update the list
-                gui.getEntryList().setListData(glossary.getWordList());
+                gui.setEntryListData(glossary.getSortedWordList());
             }
 
             @Override
@@ -47,7 +48,7 @@ public class Client {
 
             @Override
             public void onUpsert(String term, String meaning) {
-                glossary.upsert(term,meaning);
+                glossary.upsert(term, meaning);
             }
         };
         // Connect to server
@@ -69,5 +70,5 @@ public class Client {
     public static Glossary getGlossary() {
         return glossary;
     }
-    
+
 }

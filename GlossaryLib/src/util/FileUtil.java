@@ -103,4 +103,10 @@ public class FileUtil {
     public static boolean folderExists(String path) {
         return new File(path).isDirectory();
     }
+
+    /**
+     * Make default costructor private
+     */
+    private FileUtil() {
+    }
 }
