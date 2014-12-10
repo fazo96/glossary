@@ -1,6 +1,5 @@
 package net;
 
-import glossary.CommandParser;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -20,10 +19,14 @@ public class Connection implements Runnable {
     private Socket socket;
     private boolean connected;
     private ObjectOutputStream oos;
+    private String address;
+    private int port;
 
     public Connection(String address, int port) {
         connected = false;
-        connect(address, port);
+        this.address = address;
+        this.port = port;
+        //connect(address, port);
     }
 
     /**
@@ -47,6 +50,15 @@ public class Connection implements Runnable {
      * @param port port
      */
     public void connect(String address, int port) {
+        this.address = address;
+        this.port = port;
+        connect();
+    }
+
+    /**
+     * Connects to the last address and port provided.
+     */
+    public void connect() {
         disconnect(); // make sure we're disconnected
         try {
             socket = new Socket(address, port);
@@ -67,6 +79,9 @@ public class Connection implements Runnable {
      * @return true if successfull
      */
     public boolean send(String s) {
+        if (!connected) {
+            return false;
+        }
         try {
             oos.writeObject(s);
         } catch (IOException ex) {
@@ -84,7 +99,7 @@ public class Connection implements Runnable {
         try {
             ois = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
-            connected = false;
+            disconnect();
             return;
         }
         while (connected) { // Infinite loop
@@ -129,4 +144,9 @@ public class Connection implements Runnable {
             }
         }
     }
+
+    public boolean isConnected() {
+        return connected;
+    }
+
 }

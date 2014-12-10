@@ -12,8 +12,9 @@ import main.Client;
  * @author Gian
  */
 public class GUI extends javax.swing.JFrame implements ListSelectionListener {
-
+    
     private UserManual manualWindow;
+    private About aboutWindow;
 
     /**
      * Creates the GUI
@@ -25,7 +26,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         // Set JList selection event:
         entryList.addListSelectionListener(this);
     }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -47,6 +48,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         exit = new javax.swing.JMenuItem();
         edit = new javax.swing.JMenu();
         settings = new javax.swing.JMenuItem();
+        network = new javax.swing.JMenu();
+        net = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Glossary");
@@ -58,8 +61,9 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
         bNew.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         bNew.setText("Create");
-        bNew.setMaximumSize(new java.awt.Dimension(65, 23));
-        bNew.setMinimumSize(new java.awt.Dimension(65, 23));
+        bNew.setMaximumSize(new java.awt.Dimension(75, 23));
+        bNew.setMinimumSize(new java.awt.Dimension(75, 23));
+        bNew.setPreferredSize(new java.awt.Dimension(75, 23));
         bNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bNewActionPerformed(evt);
@@ -105,10 +109,10 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(bNew, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(bNew, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE))))
+                                .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -166,7 +170,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
         edit.setText("Edit");
 
-        settings.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        settings.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         settings.setText("Settings");
         settings.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -176,6 +180,18 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         edit.add(settings);
 
         jMenuBar1.add(edit);
+
+        network.setText("Network");
+
+        net.setText("Connect");
+        net.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                netActionPerformed(evt);
+            }
+        });
+        network.add(net);
+
+        jMenuBar1.add(network);
 
         setJMenuBar(jMenuBar1);
 
@@ -208,7 +224,10 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt
      */
     private void aboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutActionPerformed
-        // TODO add your handling code here:
+        if (aboutWindow == null) {
+            aboutWindow = new About();
+        }
+        aboutWindow.setVisible(true);
     }//GEN-LAST:event_aboutActionPerformed
 
     /**
@@ -249,8 +268,16 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             JOptionPane.showMessageDialog(this, "Can't set an empty Meaning for a Term");
             return;
         }
-        Client.getConnection().send((String) entryList.getSelectedValue()+":"+currentMeaning.getText());
+        Client.getConnection().send((String) entryList.getSelectedValue() + ":" + currentMeaning.getText());
     }//GEN-LAST:event_bSaveActionPerformed
+
+    private void netActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_netActionPerformed
+        Client.getConnection().connect();
+        if(Client.getConnection().isConnected())
+            Client.getConnection().disconnect();
+        else
+            Client.getConnection().connect();
+    }//GEN-LAST:event_netActionPerformed
     /**
      * Recalculates the value of the current meaning
      */
@@ -302,6 +329,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JMenuItem manual;
     private javax.swing.JLabel meaning;
+    private javax.swing.JMenuItem net;
+    private javax.swing.JMenu network;
     private javax.swing.JMenuItem settings;
     // End of variables declaration//GEN-END:variables
 

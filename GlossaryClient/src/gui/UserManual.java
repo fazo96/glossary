@@ -69,7 +69,6 @@ public class UserManual extends javax.swing.JFrame {
 
         setTitle("User Manual");
         setMinimumSize(new java.awt.Dimension(400, 300));
-        setPreferredSize(new java.awt.Dimension(800, 600));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
