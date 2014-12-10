@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 
 public class FileUtil {
 
@@ -73,7 +74,9 @@ public class FileUtil {
      * @return true is successful, false otherwise
      */
     public static boolean writeFile(File file, String content) {
-        if(file == null) return false;
+        if (file == null) {
+            return false;
+        }
         FileWriter fw = null;
         try {
             fw = new FileWriter(file);
@@ -117,6 +120,27 @@ public class FileUtil {
      */
     public static boolean folderExists(String path) {
         return new File(path).isDirectory();
+    }
+
+    /**
+     * Returns the relative path for the given filepath to the working
+     * directory.
+     *
+     * @param filepath the path to the file
+     * @return a String with the relative path
+     */
+    public static String relativePathFor(String filepath) {
+        return Paths.get(".").relativize(Paths.get(filepath)).toString();
+    }
+
+    /**
+     * Returns the relative path for the given File to the working directory.
+     *
+     * @param f the file
+     * @return a String with the relative path
+     */
+    public static String relativePathFor(File f) {
+        return Paths.get(".").relativize(f.toPath()).toString();
     }
 
     /**

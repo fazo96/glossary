@@ -17,7 +17,7 @@ import main.Server;
  */
 public class ClientHandler implements Runnable {
 
-    private static ArrayList<ClientHandler> clients;
+    private static final ArrayList<ClientHandler> clients = new ArrayList<>();
 
     private Socket socket;
     private ObjectInputStream ois = null;
@@ -32,9 +32,6 @@ public class ClientHandler implements Runnable {
      */
     public ClientHandler(Socket socket) {
         this.socket = socket;
-        if (clients == null) {
-            clients = new ArrayList<ClientHandler>();
-        }
         try {
             oos = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException ex) {

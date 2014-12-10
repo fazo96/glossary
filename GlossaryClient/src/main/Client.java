@@ -37,15 +37,15 @@ public class Client {
             @Override
             public void onDelete(String term) {
                 connection.send("DELETE:" + term);
-                Client.getGui().updateTermList();
-                Client.getGui().resetCurrentMeaning();
+                Client.getGUI().updateTermList();
+                Client.getGUI().resetCurrentMeaning();
             }
 
             @Override
             public void onUpsert(String term, String meaning) {
                 connection.send(term + ":" + meaning);
-                Client.getGui().updateTermList();
-                Client.getGui().resetCurrentMeaning();
+                Client.getGUI().updateTermList();
+                Client.getGUI().resetCurrentMeaning();
             }
 
         };
@@ -79,7 +79,7 @@ public class Client {
 
     }
 
-    public static GUI getGui() {
+    public static GUI getGUI() {
         return gui;
     }
 

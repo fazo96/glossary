@@ -34,6 +34,7 @@ public class Connection implements Runnable {
      */
     public void disconnect() {
         connected = false;
+        Client.getGUI().updateWindowInformation();
         if (socket != null) {
             try {
                 socket.close();
@@ -73,6 +74,7 @@ public class Connection implements Runnable {
             return connected;
         }
         connected = true;
+        Client.getGUI().updateWindowInformation();
         firstMessageAlreadyReceived = false;
         new Thread(this).start();
         return connected;

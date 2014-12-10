@@ -11,7 +11,6 @@ import javax.swing.event.ListSelectionListener;
 import main.Client;
 import util.FileUtil;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Font;
 
 /**
@@ -58,11 +57,29 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * Update the list of terms in the GUI.
      */
     public void updateTermList() {
-        if (search.getText() != null && !search.getText().equals(defaultSearchFieldValue)) {
+        if (!search.getText().isEmpty() && !search.getText().equals(defaultSearchFieldValue)) {
             entryList.setListData(Client.getGlossary().getSortedWordList(search.getText()));
         } else {
             entryList.setListData(Client.getGlossary().getSortedWordList());
         }
+    }
+
+    /**
+     * Updates the Window Title and the Connect button.
+     */
+    public void updateWindowInformation() {
+        String title = "Glossary";
+        if (Client.getConnection().isConnected()) {
+            title += " - Online";
+            net.setText("Disconnect");
+        } else {
+            title += " - Offline";
+            net.setText("Connect");
+        }
+        if (Client.getGlossary().isAutosaveOn()) {
+            title += " - " + FileUtil.relativePathFor(Client.getGlossary().getFile());
+        }
+        setTitle(title);
     }
 
     @SuppressWarnings("unchecked")
