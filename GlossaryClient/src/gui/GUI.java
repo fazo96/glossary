@@ -29,7 +29,9 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      */
     public GUI() {
         initComponents();
+        // Init some other window components.
         updateWindowInformation();
+        valueChanged(null);
         defaultSearchFieldValue = search.getText();
         // Display the window at the center of the screen (fixes error on linux)
         setLocationRelativeTo(null);
@@ -151,6 +153,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         currentMeaning.setEditable(false);
         currentMeaning.setColumns(20);
         currentMeaning.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        currentMeaning.setLineWrap(true);
         currentMeaning.setRows(5);
         jScrollPane2.setViewportView(currentMeaning);
 
@@ -217,7 +220,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                                 .addComponent(bDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 9, Short.MAX_VALUE))))
+                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(entries)
                         .addGap(135, 135, 135)
@@ -433,11 +436,19 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private void bImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bImportActionPerformed
         JFileChooser fc = new JFileChooser();
         fc.setMultiSelectionEnabled(true);
+        boolean succ = false;
         if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             for (File f : fc.getSelectedFiles()) // Import from string
             {
-                Client.getGlossary().fromString(FileUtil.readFile(f));
+                String in = FileUtil.readFile(f);
+                if (in != null && !in.isEmpty()) {
+                    succ = true;
+                    Client.getGlossary().fromString(in);
+                }
             }
+        }
+        if (succ) {
+            JOptionPane.showMessageDialog(this, "Import successfull");
         }
     }//GEN-LAST:event_bImportActionPerformed
     /**
@@ -449,7 +460,11 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private void bExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExportActionPerformed
         JFileChooser fc = new JFileChooser();
         if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-            FileUtil.writeFile(fc.getSelectedFile(), Client.getGlossary().asString());
+            if (FileUtil.writeFile(fc.getSelectedFile(), Client.getGlossary().asString())) {
+                JOptionPane.showMessageDialog(this, "Export successfull");
+            } else {
+                JOptionPane.showMessageDialog(this, "Export failed", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_bExportActionPerformed
     /**
@@ -552,8 +567,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
     @Override
     /**
-     * This function gets called when the selection of the list changes.
-     * It resets the status of the buttons and the Meaning text area.
+     * This function gets called when the selection of the list changes. It
+     * resets the status of the buttons and the Meaning text area.
      */
     public void valueChanged(ListSelectionEvent lse) {
         // delete button enabled only if at least 1 term is selected
