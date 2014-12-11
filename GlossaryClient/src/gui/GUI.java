@@ -170,11 +170,6 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 searchFocusLost(evt);
             }
         });
-        search.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchActionPerformed(evt);
-            }
-        });
 
         bDelete.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         bDelete.setText("Delete");
@@ -452,31 +447,43 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             FileUtil.writeFile(fc.getSelectedFile(), Client.getGlossary().asString());
         }
     }//GEN-LAST:event_bExportActionPerformed
-
-//GEN-FIRST:event_bDeleteActionPerformed
- 
-//GEN-LAST:event_bDeleteActionPerformed
-
-    private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_searchActionPerformed
-
-//GEN-FIRST:event_searchFocusLost
- 
-//GEN-LAST:event_searchFocusLost
-
-//GEN-FIRST:event_searchFocusGained
- 
-//GEN-LAST:event_searchFocusGained
-
-//GEN-FIRST:event_bSaveActionPerformed
- 
-//GEN-LAST:event_bSaveActionPerformed
-
-//GEN-FIRST:event_bNewActionPerformed
- 
-//GEN-LAST:event_bNewActionPerformed
-
+    /**
+     * When the search box gains focus, if it's displaying the default text then
+     * clear it
+     *
+     * @param evt the event
+     */
+    private void searchFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchFocusGained
+        if (search.getText().equals(defaultSearchFieldValue)) {
+            search.setText("");
+            search.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+            search.setForeground(Color.BLACK);
+        }
+    }//GEN-LAST:event_searchFocusGained
+    /**
+     * When the search box loses focus, if it's empty then put the default value
+     * back in
+     *
+     * @param evt
+     */
+    private void searchFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchFocusLost
+        if (search.getText().equals("")) {
+            search.setText(defaultSearchFieldValue);
+            search.setFont(new Font("Segoe UI", Font.ITALIC, 10));
+            search.setForeground(Color.GRAY);
+        }
+    }//GEN-LAST:event_searchFocusLost
+    /**
+     * Event handler for delete button. It deletes the record from the Glossary.
+     *
+     * @param evt the event
+     */
+    private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
+        String s = "Are you sure you want to delete " + (String) entryList.getSelectedValue() + "?";
+        if (JOptionPane.showConfirmDialog(this, s) == JOptionPane.OK_OPTION) {
+            Client.getGlossary().delete((String) entryList.getSelectedValue());
+        }
+    }//GEN-LAST:event_bDeleteActionPerformed
     /**
      * Recalculates the value of the current meaning in the text area
      */
