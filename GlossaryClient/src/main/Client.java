@@ -66,7 +66,7 @@ public class Client {
         connection = new Connection("localhost", 4000) {
 
             @Override
-            public void onFirstMessageAlreadyReceived() {
+            public void onFirstMessage() {
                 for (String s : glossary.asString().split("\n")) {
                     send(s);
                 }

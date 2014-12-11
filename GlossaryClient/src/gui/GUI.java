@@ -73,7 +73,9 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         if (Client.getConnection().isConnected()) {
             title += " - Online";
             net.setText("Disconnect");
-            status.setText("Online");
+            status.setText("Connected to "
+                    + Client.getConnection().getAddress()
+                    + ":" + Client.getConnection().getPort());
         } else {
             title += " - Offline";
             net.setText("Connect");
@@ -82,7 +84,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         if (Client.getGlossary().isAutosaveOn()) {
             String s = " - " + FileUtil.relativePathFor(Client.getGlossary().getFile());
             title += s;
-            status.setText(status.getText()+s);
+            status.setText(status.getText() + s);
         }
         setTitle(title);
     }

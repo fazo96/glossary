@@ -146,7 +146,7 @@ public class Connection implements Runnable {
                     if (firstMessageAlreadyReceived == false) {
                         // We received the first message, so...
                         firstMessageAlreadyReceived = true;
-                        onFirstMessageAlreadyReceived();
+                        onFirstMessage();
                     }
                 } else {
                     // Record the event that we received an object with an
@@ -175,8 +175,16 @@ public class Connection implements Runnable {
      * Called just after the first message from this session with the server
      * has been received
      */
-    public void onFirstMessageAlreadyReceived() {
+    public void onFirstMessage() {
         // This method exists to be overridden
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public int getPort() {
+        return port;
     }
 
 }
