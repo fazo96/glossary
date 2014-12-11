@@ -22,6 +22,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
     private UserManual manualWindow;
     private About aboutWindow;
+    private Settings settingsWindow;
     private String defaultSearchFieldValue;
 
     /**
@@ -347,7 +348,10 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt the event
      */
     private void settingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsActionPerformed
-        // TODO add your handling code here:
+        if (settingsWindow == null){
+            settingsWindow = new Settings();
+        }
+        settingsWindow.setVisible(true);
     }//GEN-LAST:event_settingsActionPerformed
 
     /**
