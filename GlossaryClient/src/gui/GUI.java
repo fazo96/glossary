@@ -97,6 +97,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         bSave = new javax.swing.JButton();
         search = new javax.swing.JTextField();
         bDelete = new javax.swing.JButton();
+        jSeparator3 = new javax.swing.JSeparator();
+        status = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         file = new javax.swing.JMenu();
         manual = new javax.swing.JMenuItem();
@@ -186,19 +188,22 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             }
         });
 
+        status.setText("Status");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jSeparator3)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addComponent(entries)
                         .addGap(135, 135, 135)
                         .addComponent(meaning)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addComponent(search, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE))
@@ -211,8 +216,12 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                                 .addComponent(bDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+                                .addGap(0, 1, Short.MAX_VALUE)))))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(status, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -224,14 +233,18 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bNew, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(search))
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(status)
+                .addGap(3, 3, 3))
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -359,41 +372,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         }
         manualWindow.setVisible(true);
     }//GEN-LAST:event_manualActionPerformed
-    /**
-     * Event handler for the New button. It allows the user to add a term
-     *
-     * @param evt the event
-     */
-    private void bNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bNewActionPerformed
-        String term = JOptionPane.showInputDialog("Insert term");
-        if (term == null || term.equals("")) {
-            return;
-        }
-        String meaning = JOptionPane.showInputDialog("Insert initial meaning");
-        if (meaning != null && !meaning.equals("")) {
-            // Upsert to glossary.
-            Client.getGlossary().upsert(term, meaning);
-        }
-    }//GEN-LAST:event_bNewActionPerformed
-    /**
-     * Event handler for the Save button. It allows the user to save the meaning
-     * he's writing.
-     *
-     * @param evt the event
-     */
-    private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
-        if (entryList.getSelectedIndex() < 0 || entryList.getSelectedValue() == "") {
-            JOptionPane.showMessageDialog(this, "You must select a Term to save.");
-            return;
-        }
-        if (currentMeaning.getText() == "") {
-            JOptionPane.showMessageDialog(this, "Can't set an empty Meaning for a Term");
-            return;
-        }
-        // Upsert to glossary
-        Client.getGlossary().upsert((String) entryList.getSelectedValue(), currentMeaning.getText());
-    }//GEN-LAST:event_bSaveActionPerformed
-    /**
+
+   /**
      * Event handler for the Connect/Disconnect button. It connects or
      * disconnects from the Server.
      *
@@ -410,10 +390,6 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             }
         }
     }//GEN-LAST:event_netActionPerformed
-
-    private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_searchActionPerformed
     /**
      * Event handler for Import button. It imports records from a file into the
      * Glossary.
@@ -442,41 +418,32 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             FileUtil.writeFile(fc.getSelectedFile(), Client.getGlossary().asString());
         }
     }//GEN-LAST:event_bExportActionPerformed
-    /**
-     * When the search box gains focus, if it's displaying the default text then
-     * clear it
-     *
-     * @param evt the event
-     */
-    private void searchFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchFocusGained
-        if (search.getText().equals(defaultSearchFieldValue)) {
-            search.setText("");
-            search.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-            search.setForeground(Color.BLACK);
-        }
-    }//GEN-LAST:event_searchFocusGained
-    /**
-     * When the search box loses focus, if it's empty then put the default value
-     * back in
-     *
-     * @param evt
-     */
-    private void searchFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchFocusLost
-        if (search.getText().equals("")) {
-            search.setText(defaultSearchFieldValue);
-            search.setFont(new Font("Segoe UI", Font.ITALIC, 10));
-            search.setForeground(Color.GRAY);
-        }
-    }//GEN-LAST:event_searchFocusLost
-    /**
-     * Event handler for delete button. It deletes the record from the Glossary.
-     *
-     * @param evt the event
-     */
-    private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
-        Client.getGlossary().delete((String) entryList.getSelectedValue());
-    }//GEN-LAST:event_bDeleteActionPerformed
-    /**
+
+//GEN-FIRST:event_bDeleteActionPerformed
+ 
+//GEN-LAST:event_bDeleteActionPerformed
+
+    private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_searchActionPerformed
+
+//GEN-FIRST:event_searchFocusLost
+ 
+//GEN-LAST:event_searchFocusLost
+
+//GEN-FIRST:event_searchFocusGained
+ 
+//GEN-LAST:event_searchFocusGained
+
+//GEN-FIRST:event_bSaveActionPerformed
+ 
+//GEN-LAST:event_bSaveActionPerformed
+
+//GEN-FIRST:event_bNewActionPerformed
+ 
+//GEN-LAST:event_bNewActionPerformed
+
+   /**
      * Recalculates the value of the current meaning in the text area
      */
     public void resetCurrentMeaning() {
@@ -526,12 +493,14 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JMenuItem manual;
     private javax.swing.JLabel meaning;
     private javax.swing.JMenuItem net;
     private javax.swing.JMenu network;
     private javax.swing.JTextField search;
     private javax.swing.JMenuItem settings;
+    private javax.swing.JLabel status;
     // End of variables declaration//GEN-END:variables
 
     @Override
