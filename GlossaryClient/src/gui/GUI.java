@@ -29,6 +29,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      */
     public GUI() {
         initComponents();
+        updateWindowInformation();
         defaultSearchFieldValue = search.getText();
         // Display the window at the center of the screen (fixes error on linux)
         setLocationRelativeTo(null);
@@ -72,12 +73,16 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         if (Client.getConnection().isConnected()) {
             title += " - Online";
             net.setText("Disconnect");
+            status.setText("Online");
         } else {
             title += " - Offline";
             net.setText("Connect");
+            status.setText("Offline");
         }
         if (Client.getGlossary().isAutosaveOn()) {
-            title += " - " + FileUtil.relativePathFor(Client.getGlossary().getFile());
+            String s = " - " + FileUtil.relativePathFor(Client.getGlossary().getFile());
+            title += s;
+            status.setText(status.getText()+s);
         }
         setTitle(title);
     }
@@ -188,7 +193,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             }
         });
 
-        status.setText("Status");
+        status.setText("Offline");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -213,13 +218,11 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                                 .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 9, Short.MAX_VALUE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(entries)
-                                .addGap(135, 135, 135)
-                                .addComponent(meaning))
-                            .addComponent(status, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(entries)
+                        .addGap(135, 135, 135)
+                        .addComponent(meaning)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(status, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
