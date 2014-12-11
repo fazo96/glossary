@@ -170,6 +170,11 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 searchFocusLost(evt);
             }
         });
+        search.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchActionPerformed(evt);
+            }
+        });
 
         bDelete.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         bDelete.setText("Delete");
@@ -189,16 +194,11 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jSeparator3)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(entries)
-                        .addGap(135, 135, 135)
-                        .addComponent(meaning)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator3, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addComponent(search, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE))
@@ -211,12 +211,16 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                                 .addComponent(bDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 1, Short.MAX_VALUE)))))
+                                .addGap(0, 9, Short.MAX_VALUE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(entries)
+                                .addGap(135, 135, 135)
+                                .addComponent(meaning))
+                            .addComponent(status, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(status, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -228,7 +232,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -248,11 +252,6 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
         manual.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.CTRL_MASK));
         manual.setText("User Manual");
-        manual.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                manualActionPerformed(evt);
-            }
-        });
         file.add(manual);
 
         about.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
@@ -373,7 +372,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      *
      * @param evt the event
      */
-    private void bNewActionPerformed(java.awt.event.ActionEvent evt) {                                     
+    private void bNewActionPerformed(java.awt.event.ActionEvent evt) {
         String term = JOptionPane.showInputDialog("Insert term");
         if (term == null || term.equals("")) {
             return;
@@ -383,14 +382,15 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             // Upsert to glossary.
             Client.getGlossary().upsert(term, meaning);
         }
-    }                                    
+    }
+
     /**
      * Event handler for the Save button. It allows the user to save the meaning
      * he's writing.
      *
      * @param evt the event
      */
-    private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {                                      
+    private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {
         if (entryList.getSelectedIndex() < 0 || entryList.getSelectedValue() == "") {
             JOptionPane.showMessageDialog(this, "You must select a Term to save.");
             return;
@@ -401,7 +401,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         }
         // Upsert to glossary
         Client.getGlossary().upsert((String) entryList.getSelectedValue(), currentMeaning.getText());
-    }                                     
+    }
+
     /**
      * Event handler for the Connect/Disconnect button. It connects or
      * disconnects from the Server.
@@ -484,6 +485,16 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             Client.getGlossary().delete((String) entryList.getSelectedValue());
         }
     }//GEN-LAST:event_bDeleteActionPerformed
+    /**
+     * Don't remove this method because if you do netbeans will change the
+     * GUI.form and the GUI will not run. I tried to fix this, could not do it!
+     * - Fasoli
+     *
+     * @param evt the event
+     */
+    private void searchActionPerformed(java.awt.event.ActionEvent evt) {
+    }
+
     /**
      * Recalculates the value of the current meaning in the text area
      */
