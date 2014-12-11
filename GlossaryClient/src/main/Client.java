@@ -38,14 +38,12 @@ public class Client {
             public void onDelete(String term) {
                 connection.send("DELETE:" + term);
                 Client.getGUI().updateTermList();
-                Client.getGUI().resetCurrentMeaning();
             }
 
             @Override
             public void onUpsert(String term, String meaning) {
                 connection.send(term + ":" + meaning);
                 Client.getGUI().updateTermList();
-                Client.getGUI().resetCurrentMeaning();
             }
 
         };

@@ -125,7 +125,6 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         setMinimumSize(new java.awt.Dimension(400, 300));
 
         entryList.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        entryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(entryList);
 
         bNew.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
@@ -396,8 +395,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt the event
      */
     private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {
-        if (entryList.getSelectedIndex() < 0 || entryList.getSelectedValue() == "") {
-            JOptionPane.showMessageDialog(this, "You must select a Term to save.");
+        if (entryList.getSelectedValuesList().size() != 1) {
+            JOptionPane.showMessageDialog(this, "You must select a single Term to save.");
             return;
         }
         if (currentMeaning.getText() == "") {
@@ -485,9 +484,21 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt the event
      */
     private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
-        String s = "Are you sure you want to delete " + (String) entryList.getSelectedValue() + "?";
+        String s = "Are you sure you want to delete ";
+        if (entryList.getSelectedValuesList().isEmpty()) {
+            // no selection
+            JOptionPane.showMessageDialog(this, "You must select at least a term to delete.");
+            return;
+        } else if (entryList.getSelectedValuesList().size() == 1) {
+            // One selection
+            s += (String) entryList.getSelectedValue() + "?";
+        } else {
+            // many selections
+            s += entryList.getSelectedValuesList().size() + " terms?";
+        }
         if (JOptionPane.showConfirmDialog(this, s) == JOptionPane.OK_OPTION) {
-            Client.getGlossary().delete((String) entryList.getSelectedValue());
+            entryList.getSelectedValuesList().stream().forEach(
+                    (item) -> Client.getGlossary().delete((String) item));
         }
     }//GEN-LAST:event_bDeleteActionPerformed
     /**
@@ -498,27 +509,6 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt the event
      */
     private void searchActionPerformed(java.awt.event.ActionEvent evt) {
-    }
-
-    /**
-     * Recalculates the value of the current meaning in the text area
-     */
-    public void resetCurrentMeaning() {
-        if (entryList.getSelectedIndex() < 0) {
-            currentMeaning.setEditable(false);
-            bSave.setEnabled(false);
-            bDelete.setEnabled(false);
-            currentMeaning.setText("Select a term");
-            currentMeaning.setFont(new Font("Segoe UI", Font.ITALIC, 12));
-            currentMeaning.setForeground(Color.GRAY);
-        } else {
-            currentMeaning.setText(Client.getGlossary().meaningOf((String) entryList.getSelectedValue()));
-            currentMeaning.setEditable(true);
-            bSave.setEnabled(true);
-            bDelete.setEnabled(true);
-            currentMeaning.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-            currentMeaning.setForeground(Color.BLACK);
-        }
     }
 
     /**
@@ -562,10 +552,26 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
     @Override
     /**
-     * This function gets called when the selection of the list changes. It
-     * resets the value of the TextArea.
+     * This function gets called when the selection of the list changes.
+     * It resets the status of the buttons and the Meaning text area.
      */
     public void valueChanged(ListSelectionEvent lse) {
-        resetCurrentMeaning();
+        // delete button enabled only if at least 1 term is selected
+        bDelete.setEnabled(!entryList.getSelectedValuesList().isEmpty());
+        if (entryList.getSelectedValuesList().size() == 1) {
+            // Can change the Meaning
+            currentMeaning.setText(Client.getGlossary().meaningOf((String) entryList.getSelectedValue()));
+            currentMeaning.setEditable(true);
+            bSave.setEnabled(true);
+            currentMeaning.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            currentMeaning.setForeground(Color.BLACK);
+        } else {
+            // Can't change the meaning
+            currentMeaning.setEditable(false);
+            bSave.setEnabled(false);
+            currentMeaning.setText("Select a term");
+            currentMeaning.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+            currentMeaning.setForeground(Color.GRAY);
+        }
     }
 }
