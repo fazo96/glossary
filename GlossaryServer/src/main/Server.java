@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.ClientHandler;
+import net.ClientManager;
+import net.ConnectedClient;
 
 /**
  * The Glossary Server.
@@ -19,6 +20,7 @@ public class Server implements Runnable {
     private final CommandParser parser;
     private final int port;
     private boolean listening;
+    private ClientManager clientManager;
 
     /**
      * Creates a new Server that listens to the given port.
@@ -30,18 +32,19 @@ public class Server implements Runnable {
     public Server(int port, String autoSaveFile) {
         this.port = port;
         listening = false; // not listening right now
-        System.out.println("Glossary Server starting on port "+port);
+        // Initialize ClientManager
+        clientManager = new ClientManager(null, null);
         // Intialize Server glossary and load from file.
         glossary = new Glossary(autoSaveFile) {
 
             @Override
             public void onDelete(String term) {
-                ClientHandler.sendToAll("DELETE:" + term, null);
+                clientManager.sendToAll("DELETE:" + term, null);
             }
 
             @Override
             public void onUpsert(String term, String meaning) {
-                ClientHandler.sendToAll(term + ":" + meaning, null);
+                clientManager.sendToAll(term + ":" + meaning, null);
             }
 
         };
@@ -60,6 +63,23 @@ public class Server implements Runnable {
                 glossary.upsert(term, meaning);
             }
         };
+        clientManager.setGlossary(glossary);
+        clientManager.setCommandParser(parser);
+    }
+
+    /**
+     * Creates a new Server that listens to the given port.
+     *
+     * @param port the port to listen to
+     * @param g the glossary to use
+     * @param parser the parser to use
+     */
+    public Server(int port, Glossary g, CommandParser parser, ClientManager ch) {
+        this.port = port;
+        listening = false; // not listening right now
+        this.glossary = g;
+        this.parser = parser;
+        this.clientManager = ch;
     }
 
     /**
@@ -89,9 +109,9 @@ public class Server implements Runnable {
         listening = true;
         while (listening) {
             System.out.println("Awaiting a connection on port " + port + "...");
-            ClientHandler c = null;
+            ConnectedClient c = null;
             try {
-                new Thread(c = new ClientHandler(ss.accept())).start();
+                new Thread(c = new ConnectedClient(ss.accept(),clientManager)).start();
                 System.out.println(c.getSocket().getInetAddress().getHostAddress() + " has connected");
             } catch (IOException ex) {
                 System.out.println("There was a problem accepting a connection.");
@@ -128,6 +148,12 @@ public class Server implements Runnable {
      */
     public CommandParser getCommandParser() {
         return parser;
+    }
+    /**
+     * Called when the server starts listening
+     */
+    public void onStartListening(){
+        // This method exists to be overridden
     }
 
 }

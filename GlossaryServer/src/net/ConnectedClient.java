@@ -1,28 +1,24 @@
 package net;
 
+import glossary.Glossary;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import main.Main;
-
 /**
- * An instance of ClientHandler represents a connection with a client. The Class
- * contains a list of ClientHandlers and some useful methods.
+ * An instance of ConnectedClient represents a connection with a client.
  *
  * @author fazo
  */
-public class ClientHandler implements Runnable {
-
-    private static final ArrayList<ClientHandler> clients = new ArrayList<>();
+public class ConnectedClient implements Runnable {
 
     private Socket socket;
     private ObjectInputStream ois = null;
     private ObjectOutputStream oos = null;
-    private boolean connected = true;
+    private boolean connected;
+    private ClientManager ch;
 
     /**
      * Creates a new Client Handler using a Socket that must be connected to a
@@ -30,8 +26,9 @@ public class ClientHandler implements Runnable {
      *
      * @param socket the socket connected to a client
      */
-    public ClientHandler(Socket socket) {
+    public ConnectedClient(Socket socket, ClientManager ch) {
         this.socket = socket;
+        this.ch = ch;
         try {
             oos = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException ex) {
@@ -39,11 +36,9 @@ public class ClientHandler implements Runnable {
             connected = false;
             return;
         }
-        synchronized (clients) {
-            clients.add(this);
-        }
-        // we have to send the glossary to the client now that he's connected
-        sendGlossary();
+        // If everything went ok
+        connected = true;
+        ch.register(this);
     }
 
     @Override
@@ -77,7 +72,7 @@ public class ClientHandler implements Runnable {
             } catch (ClassNotFoundException ex) {
                 // Fired if the object has a Class that does not exist.
                 // This error should never happen.
-                Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ConnectedClient.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (o != null) {
                 // We received some object
@@ -87,7 +82,7 @@ public class ClientHandler implements Runnable {
                     System.out.println("Received command:\n" + s + "\nFrom: "
                             + socket.getInetAddress().getHostAddress());
                     // Executing command:
-                    Main.getServer().getCommandParser().parse(s);
+                    ch.getCommandParser().parse(s);
                 } else {
                     // Record the event that we received an object with an
                     // unexpected Class.
@@ -99,14 +94,14 @@ public class ClientHandler implements Runnable {
         }
         /* Infinite loop ended, so the client has been ordered to stop network
          activity */
-        disconnect(); // Make sure disconnection is properly handled
+        stopNetworkActivity(); // Make sure disconnection is properly handled
     }
 
     /**
      * Sends entire Glossary to client.
      */
-    public void sendGlossary() {
-        for (String s : Main.getServer().getGlossary().asString().split("\n")) {
+    public void sendGlossary(Glossary g) {
+        for (String s : g.asString().split("\n")) {
             send(s);
         }
     }
@@ -125,60 +120,17 @@ public class ClientHandler implements Runnable {
      * and can't send messages. Used internally for the disconnect() and
      * disconnectAll() methods
      */
-    private void stopNetworkActivity() {
+    public void stopNetworkActivity() {
         if (!connected) {
             return; // Already stopped network activity
         }
+        ch.unregister(this);
         try {
             socket.close();
         } catch (IOException ex) {
             // Ignore exception
         }
         connected = false; // Inform Thread to stop
-    }
-
-    /**
-     * Gracefully disconnects this Client and deletes all traces.
-     */
-    public void disconnect() {
-        synchronized (clients) {
-            clients.remove(this);
-        }
-        stopNetworkActivity();
-    }
-
-    /**
-     * Send a message to all connected Clients.
-     *
-     * @param msg the message to send
-     * @param exception if it's not null then this client will not receive the
-     * message
-     * @return the number of client that failed to receive the message.
-     */
-    public static int sendToAll(String msg, ClientHandler exception) {
-        int i = 0;
-        synchronized (clients) {
-            for (ClientHandler c : clients) {
-                if (c == exception) {
-                    continue;
-                }
-                if (!c.send(msg)) {
-                    i++;
-                }
-            }
-        }
-        return i;
-    }
-
-    /**
-     * Gracefully disconnects all clients from the server.
-     */
-    public static void disconnectAll() {
-        // Stop network activity of all clients
-        clients.forEach((ClientHandler c) -> c.stopNetworkActivity());
-        synchronized (clients) {
-            clients.clear(); // Empty the clients list
-        }
     }
 
     /**
