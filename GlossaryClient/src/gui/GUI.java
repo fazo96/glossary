@@ -130,10 +130,10 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             }
         });
 
-        entries.setFont(new java.awt.Font("Segoe UI", 1, 11)); // NOI18N
+        entries.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         entries.setText("Entries:");
 
-        meaning.setFont(new java.awt.Font("Segoe UI", 1, 11)); // NOI18N
+        meaning.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         meaning.setText("Meaning:");
 
         jScrollPane2.setMaximumSize(new java.awt.Dimension(170, 100));
@@ -224,7 +224,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -233,6 +233,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                     .addComponent(search))
                 .addContainerGap())
         );
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         file.setText("File");
 
@@ -300,6 +302,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
         network.setText("Network");
 
+        net.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         net.setText("Connect");
         net.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -311,17 +314,6 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         jMenuBar1.add(network);
 
         setJMenuBar(jMenuBar1);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -493,11 +485,15 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             bSave.setEnabled(false);
             bDelete.setEnabled(false);
             currentMeaning.setText("Select a term");
+            currentMeaning.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+            currentMeaning.setForeground(Color.GRAY);
         } else {
             currentMeaning.setText(Client.getGlossary().meaningOf((String) entryList.getSelectedValue()));
             currentMeaning.setEditable(true);
             bSave.setEnabled(true);
             bDelete.setEnabled(true);
+            currentMeaning.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            currentMeaning.setForeground(Color.BLACK);
         }
     }
 
