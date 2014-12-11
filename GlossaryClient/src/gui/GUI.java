@@ -83,7 +83,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             net.setText("Disconnect");
             stat += "Connected to "
                     + Client.get().getConnection().getAddress()
-                    + ": " + Client.get().getConnection().getPort();
+                    + ":" + Client.get().getConnection().getPort();
         } else {
             net.setText("Connect");
         }
@@ -91,7 +91,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             offline = false;
             // Hosting
             title += " - Hosting";
-            stat += (stat.isEmpty() ? "" : " - ")
+            stat += (stat.isEmpty() ? "" : "- ")
                     + "Hosting on port "
                     + Client.get().getAdHocServer().getPort();
             host.setText("Stop Hosting");
