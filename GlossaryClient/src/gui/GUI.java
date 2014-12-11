@@ -369,7 +369,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         if (term == null || term.equals("")) {
             return;
         }
-        String meaning = JOptionPane.showInputDialog("Insert initial meaning");
+        String meaning = JOptionPane.showInputDialog("Insert meaning");
         if (meaning != null && !meaning.equals("")) {
             // Upsert to glossary.
             Client.getGlossary().upsert(term, meaning);
