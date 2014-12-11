@@ -15,20 +15,24 @@ import net.ClientHandler;
  */
 public class Server implements Runnable {
 
-    private static Glossary glossary;
-    private static CommandParser parser;
-    private static final int port = 4000;
-    private static boolean listening = true;
+    private final Glossary glossary;
+    private final CommandParser parser;
+    private final int port;
+    private boolean listening;
 
     /**
-     * Entry point of the Glossary Server
+     * Creates a new Server that listens to the given port.
      *
-     * @param args args are not used in this program
+     * @param port the port to listen to
+     * @param autoSaveFile if not null, the server will autosave the Glossary to
+     * this file.
      */
-    public static void main(String args[]) {
-        System.out.println("Glossary Server");
+    public Server(int port, String autoSaveFile) {
+        this.port = port;
+        listening = false; // not listening right now
+        System.out.println("Glossary Server starting on port "+port);
         // Intialize Server glossary and load from file.
-        glossary = new Glossary("glossary.txt") {
+        glossary = new Glossary(autoSaveFile) {
 
             @Override
             public void onDelete(String term) {
@@ -56,16 +60,15 @@ public class Server implements Runnable {
                 glossary.upsert(term, meaning);
             }
         };
-        // Start the Listener
-        //new Thread(new Server());
-        new Server().run();
     }
 
     /**
-     * Make default costructor private.
+     * Creates a Server that listens to the given port.
+     *
+     * @param port the port to listen to
      */
-    private Server() {
-
+    public Server(int port) {
+        this(port, null);
     }
 
     @Override
@@ -83,6 +86,7 @@ public class Server implements Runnable {
             return;
         }
         // Start listening for connections
+        listening = true;
         while (listening) {
             System.out.println("Awaiting a connection on port " + port + "...");
             ClientHandler c = null;
@@ -93,6 +97,19 @@ public class Server implements Runnable {
                 System.out.println("There was a problem accepting a connection.");
             }
         }
+        listening = false;
+    }
+
+    public void stop() {
+        listening = false;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public boolean isListening() {
+        return listening;
     }
 
     /**
@@ -100,7 +117,7 @@ public class Server implements Runnable {
      *
      * @return a Glossary instance.
      */
-    public static Glossary getGlossary() {
+    public Glossary getGlossary() {
         return glossary;
     }
 
@@ -109,7 +126,7 @@ public class Server implements Runnable {
      *
      * @return a CommandParser instance/implementation.
      */
-    public static CommandParser getCommandParser() {
+    public CommandParser getCommandParser() {
         return parser;
     }
 

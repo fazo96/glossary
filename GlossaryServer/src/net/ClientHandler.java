@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import main.Server;
+import main.Main;
 
 /**
  * An instance of ClientHandler represents a connection with a client. The Class
@@ -87,7 +87,7 @@ public class ClientHandler implements Runnable {
                     System.out.println("Received command:\n" + s + "\nFrom: "
                             + socket.getInetAddress().getHostAddress());
                     // Executing command:
-                    Server.getCommandParser().parse(s);
+                    Main.getServer().getCommandParser().parse(s);
                 } else {
                     // Record the event that we received an object with an
                     // unexpected Class.
@@ -106,7 +106,7 @@ public class ClientHandler implements Runnable {
      * Sends entire Glossary to client.
      */
     public void sendGlossary() {
-        for (String s : Server.getGlossary().asString().split("\n")) {
+        for (String s : Main.getServer().getGlossary().asString().split("\n")) {
             send(s);
         }
     }

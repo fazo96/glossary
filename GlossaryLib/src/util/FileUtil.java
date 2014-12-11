@@ -51,6 +51,9 @@ public class FileUtil {
      * @return the content of the file as a String
      */
     public static String readFile(String path) {
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
         return readFile(new File(path));
     }
 

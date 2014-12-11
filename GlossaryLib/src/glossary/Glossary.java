@@ -23,9 +23,11 @@ public class Glossary {
      */
     public Glossary(String file) {
         this(); // Call other costructor
-        this.file = file;
-        this.autosave = true;
-        load(file);
+        if (file != null && !file.isEmpty()) {
+            this.file = file;
+            this.autosave = true;
+            load(file);
+        }
     }
 
     public Glossary() {
