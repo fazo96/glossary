@@ -4,7 +4,9 @@ import glossary.CommandParser;
 import glossary.Glossary;
 import gui.GUI;
 import javax.swing.UIManager;
+import net.ClientManager;
 import net.Connection;
+import util.GUIUtil;
 
 /**
  *
@@ -12,12 +14,25 @@ import net.Connection;
  */
 public class Client {
 
-    private static GUI gui;
-    private static CommandParser parser;
-    private static Connection connection;
-    private static Glossary glossary;
+    private static Client client;
+
+    private GUI gui;
+    private CommandParser parser;
+    private Connection connection;
+    private Glossary glossary;
+    private Server adHocServer;
+    private ClientManager clientManager;
 
     public static void main(String args[]) {
+        // Start the Client!
+        client = new Client();
+        client.start();
+    }
+
+    /**
+     * Start the Client!
+     */
+    public void start() {
         /*
          Setting the native OS look and feel. This way the program uses the OS's
          window toolkit instead of the Java one to render the application, if it
@@ -28,26 +43,29 @@ public class Client {
         } catch (Exception ex) {
             System.out.println("Unable to load native look and feel");
         }
+        // Prepare ClientManager
+        clientManager = new ClientManager(null, null);
         /**
          * Configure Event handlers: when the Glossary is changed, the change is
          * sent to the server and displayed in the GUI.
          */
+        // Prepare glossary
         glossary = new Glossary() {
 
             @Override
             public void onDelete(String term) {
                 connection.send("DELETE:" + term);
-                Client.getGUI().updateTermList();
+                client.getGUI().updateTermList();
             }
 
             @Override
             public void onUpsert(String term, String meaning) {
                 connection.send(term + ":" + meaning);
-                Client.getGUI().updateTermList();
+                client.getGUI().updateTermList();
             }
 
         };
-        // Configure parser to execute commands coming from the server
+        // Prepare parser to execute commands
         parser = new CommandParser() {
 
             @Override
@@ -60,7 +78,7 @@ public class Client {
                 glossary.upsert(term, meaning);
             }
         };
-        // Prepare connection object so it's not null
+        // Prepare connection object
         connection = new Connection("localhost", 4000) {
 
             @Override
@@ -71,26 +89,51 @@ public class Client {
             }
 
         };
+        // Finish setting up clientmanager
+        clientManager.setCommandParser(parser);
+        clientManager.setGlossary(glossary);
+        // Prepare adhocserver
+        adHocServer = new Server(4000, glossary, parser, clientManager){
+
+            @Override
+            public void onStartListening() {
+                gui.updateWindowInformation();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                GUIUtil.tellError("There was a problem starting the server:\n"+e);
+            }
+        
+        };
         // Start GUI
         gui = new GUI();
         gui.setVisible(true);
 
     }
 
-    public static GUI getGUI() {
+    public GUI getGUI() {
         return gui;
     }
 
-    public static CommandParser getParser() {
+    public CommandParser getParser() {
         return parser;
     }
 
-    public static Connection getConnection() {
+    public Connection getConnection() {
         return connection;
     }
 
-    public static Glossary getGlossary() {
+    public Glossary getGlossary() {
         return glossary;
+    }
+
+    public Server getAdHocServer() {
+        return adHocServer;
+    }
+
+    public static Client get() {
+        return client;
     }
 
 }

@@ -21,6 +21,7 @@ public class Server implements Runnable {
     private final int port;
     private boolean listening;
     private ClientManager clientManager;
+    private ServerSocket ss;
 
     /**
      * Creates a new Server that listens to the given port.
@@ -97,21 +98,22 @@ public class Server implements Runnable {
      */
     public void run() {
         // Initialize Server Socket
-        ServerSocket ss;
         try {
             ss = new ServerSocket(port);
         } catch (IOException ex) {
             // Failed to create ServerSocket, exiting
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            onError(ex);
             return;
         }
         // Start listening for connections
         listening = true;
+        onStartListening(); // Fire event
         while (listening) {
             System.out.println("Awaiting a connection on port " + port + "...");
             ConnectedClient c = null;
             try {
-                new Thread(c = new ConnectedClient(ss.accept(),clientManager)).start();
+                new Thread(c = new ConnectedClient(ss.accept(), clientManager)).start();
                 System.out.println(c.getSocket().getInetAddress().getHostAddress() + " has connected");
             } catch (IOException ex) {
                 System.out.println("There was a problem accepting a connection.");
@@ -122,6 +124,13 @@ public class Server implements Runnable {
 
     public void stop() {
         listening = false;
+        if (ss != null) {
+            try {
+                ss.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     public int getPort() {
@@ -149,10 +158,19 @@ public class Server implements Runnable {
     public CommandParser getCommandParser() {
         return parser;
     }
+
     /**
      * Called when the server starts listening
      */
-    public void onStartListening(){
+    public void onStartListening() {
+        // This method exists to be overridden
+    }
+
+    /**
+     * Called when the server failed to start
+     * @param e the error that caused the event to fire
+     */
+    public void onError(Exception e) {
         // This method exists to be overridden
     }
 

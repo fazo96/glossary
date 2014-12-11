@@ -12,6 +12,7 @@ import main.Client;
 import util.FileUtil;
 import java.awt.Color;
 import java.awt.Font;
+import util.GUIUtil;
 
 /**
  * Main User Interface of the Glossary
@@ -23,7 +24,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private UserManual manualWindow;
     private About aboutWindow;
     private Settings settingsWindow;
-    private String defaultSearchFieldValue;
+    private final String defaultSearchFieldValue;
 
     /**
      * Creates the GUI
@@ -62,9 +63,9 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      */
     public void updateTermList() {
         if (!search.getText().isEmpty() && !search.getText().equals(defaultSearchFieldValue)) {
-            entryList.setListData(Client.getGlossary().getSortedWordList(search.getText()));
+            entryList.setListData(Client.get().getGlossary().getSortedWordList(search.getText()));
         } else {
-            entryList.setListData(Client.getGlossary().getSortedWordList());
+            entryList.setListData(Client.get().getGlossary().getSortedWordList());
         }
     }
 
@@ -73,19 +74,37 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      */
     public void updateWindowInformation() {
         String title = "Glossary";
-        if (Client.getConnection().isConnected()) {
-            title += " - Online";
+        boolean offline = true;
+        if (Client.get().getConnection().isConnected()) {
+            offline = false;
+            // Connected to Server
+            title += " - Connected";
             net.setText("Disconnect");
             status.setText("Connected to "
-                    + Client.getConnection().getAddress()
-                    + ":" + Client.getConnection().getPort());
+                    + Client.get().getConnection().getAddress()
+                    + ":" + Client.get().getConnection().getPort());
         } else {
+            net.setText("Connect");
+        }
+        if (Client.get().getAdHocServer().isListening()) {
+            offline = false;
+            // Hosting
+            title += " - Hosting";
+            status.setText("Hosting on port " + Client.get().getAdHocServer().getPort());
+            host.setText("Stop Hosting");
+        } else {
+            host.setText("Host");
+        }
+        if (offline) {
+            // Offline
             title += " - Offline";
             net.setText("Connect");
+            host.setText("Host");
             status.setText("Offline");
         }
-        if (Client.getGlossary().isAutosaveOn()) {
-            String s = " - " + FileUtil.relativePathFor(Client.getGlossary().getFile());
+        if (Client.get().getGlossary().isAutosaveOn()) {
+            // Autosaving
+            String s = " - " + FileUtil.relativePathFor(Client.get().getGlossary().getFile());
             title += s;
             status.setText(status.getText() + s);
         }
@@ -122,6 +141,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         settings = new javax.swing.JMenuItem();
         network = new javax.swing.JMenu();
         net = new javax.swing.JMenuItem();
+        host = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Glossary");
@@ -331,6 +351,15 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         });
         network.add(net);
 
+        host.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        host.setText("Host");
+        host.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hostActionPerformed(evt);
+            }
+        });
+        network.add(host);
+
         jMenuBar1.add(network);
 
         setJMenuBar(jMenuBar1);
@@ -353,7 +382,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt the event
      */
     private void settingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsActionPerformed
-        if (settingsWindow == null){
+        if (settingsWindow == null) {
             settingsWindow = new Settings();
         }
         settingsWindow.setVisible(true);
@@ -396,7 +425,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         String meaning = JOptionPane.showInputDialog("Insert meaning");
         if (meaning != null && !meaning.equals("")) {
             // Upsert to glossary.
-            Client.getGlossary().upsert(term, meaning);
+            Client.get().getGlossary().upsert(term, meaning);
         }
     }
 
@@ -416,7 +445,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             return;
         }
         // Upsert to glossary
-        Client.getGlossary().upsert((String) entryList.getSelectedValue(), currentMeaning.getText());
+        Client.get().getGlossary().upsert((String) entryList.getSelectedValue(), currentMeaning.getText());
     }
 
     /**
@@ -426,15 +455,17 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt the event
      */
     private void netActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_netActionPerformed
-        if (Client.getConnection().isConnected()) {
-            Client.getConnection().disconnect();
-            net.setText("Connect");
+        if (Client.get().getConnection().isConnected()) {
+            if (GUIUtil.ask("Are you sure you want to disconnect?")) {
+                Client.get().getConnection().disconnect();
+            }
         } else {
-            if (Client.getConnection().connect()) {
+            if (Client.get().getConnection().connect()) {
                 // If connection is successfull
-                net.setText("Disconnect");
+                GUIUtil.tell("Successfully connected to server");
             }
         }
+        updateWindowInformation();
     }//GEN-LAST:event_netActionPerformed
     /**
      * Event handler for Import button. It imports records from a file into the
@@ -452,7 +483,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 String in = FileUtil.readFile(f);
                 if (in != null && !in.isEmpty()) {
                     succ = true;
-                    Client.getGlossary().fromString(in);
+                    Client.get().getGlossary().fromString(in);
                 }
             }
         }
@@ -469,7 +500,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private void bExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExportActionPerformed
         JFileChooser fc = new JFileChooser();
         if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-            if (FileUtil.writeFile(fc.getSelectedFile(), Client.getGlossary().asString())) {
+            if (FileUtil.writeFile(fc.getSelectedFile(), Client.get().getGlossary().asString())) {
                 JOptionPane.showMessageDialog(this, "Export successfull");
             } else {
                 JOptionPane.showMessageDialog(this, "Export failed", "Error", JOptionPane.ERROR_MESSAGE);
@@ -522,9 +553,33 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         }
         if (JOptionPane.showConfirmDialog(this, s) == JOptionPane.OK_OPTION) {
             entryList.getSelectedValuesList().stream().forEach(
-                    (item) -> Client.getGlossary().delete((String) item));
+                    (item) -> Client.get().getGlossary().delete((String) item));
         }
     }//GEN-LAST:event_bDeleteActionPerformed
+    /**
+     * Event handler for Host button
+     *
+     * @param evt
+     */
+    private void hostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hostActionPerformed
+        if (Client.get().getAdHocServer().isListening()) {
+            // Server open
+            if (GUIUtil.ask("Are you sure you want to stop Hosting?")) {
+                // Close server
+                Client.get().getAdHocServer().stop();
+                updateWindowInformation();
+            }
+        } else {
+            if (Client.get().getConnection().isConnected()) {
+                if (!GUIUtil.ask("Are you sure you want to disconnect from the Server?")) {
+                    // If user is Connected to some server and he doesn't want to disconnect then return
+                    return;
+                }
+            }
+            // Start server
+            new Thread(Client.get().getAdHocServer()).start();
+        }
+    }//GEN-LAST:event_hostActionPerformed
     /**
      * Don't remove this method because if you do netbeans will change the
      * GUI.form and the GUI will not run. I tried to fix this, could not do it!
@@ -558,6 +613,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private javax.swing.JList entryList;
     private javax.swing.JMenuItem exit;
     private javax.swing.JMenu file;
+    private javax.swing.JMenuItem host;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -584,7 +640,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         bDelete.setEnabled(!entryList.getSelectedValuesList().isEmpty());
         if (entryList.getSelectedValuesList().size() == 1) {
             // Can change the Meaning
-            currentMeaning.setText(Client.getGlossary().meaningOf((String) entryList.getSelectedValue()));
+            currentMeaning.setText(Client.get().getGlossary().meaningOf((String) entryList.getSelectedValue()));
             currentMeaning.setEditable(true);
             bSave.setEnabled(true);
             currentMeaning.setFont(new Font("Segoe UI", Font.PLAIN, 13));

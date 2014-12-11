@@ -34,7 +34,7 @@ public class Connection implements Runnable {
      */
     public void disconnect() {
         connected = false;
-        Client.getGUI().updateWindowInformation();
+        Client.get().getGUI().updateWindowInformation();
         if (socket != null) {
             try {
                 socket.close();
@@ -74,7 +74,7 @@ public class Connection implements Runnable {
             return connected;
         }
         connected = true;
-        Client.getGUI().updateWindowInformation();
+        Client.get().getGUI().updateWindowInformation();
         firstMessageAlreadyReceived = false;
         new Thread(this).start();
         return connected;
@@ -142,7 +142,7 @@ public class Connection implements Runnable {
                     String s = (String) o;
                     System.out.println("Received command:\n" + s);
                     // Executing command:
-                    Client.getParser().parse(s);
+                    Client.get().getParser().parse(s);
                     if (firstMessageAlreadyReceived == false) {
                         // We received the first message, so...
                         firstMessageAlreadyReceived = true;
