@@ -373,7 +373,41 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         manualWindow.setVisible(true);
     }//GEN-LAST:event_manualActionPerformed
 
-   /**
+    /**
+     * Event handler for the New button. It allows the user to add a term
+     *
+     * @param evt the event
+     */
+    private void bNewActionPerformed(java.awt.event.ActionEvent evt) {                                     
+        String term = JOptionPane.showInputDialog("Insert term");
+        if (term == null || term.equals("")) {
+            return;
+        }
+        String meaning = JOptionPane.showInputDialog("Insert meaning");
+        if (meaning != null && !meaning.equals("")) {
+            // Upsert to glossary.
+            Client.getGlossary().upsert(term, meaning);
+        }
+    }                                    
+    /**
+     * Event handler for the Save button. It allows the user to save the meaning
+     * he's writing.
+     *
+     * @param evt the event
+     */
+    private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {                                      
+        if (entryList.getSelectedIndex() < 0 || entryList.getSelectedValue() == "") {
+            JOptionPane.showMessageDialog(this, "You must select a Term to save.");
+            return;
+        }
+        if (currentMeaning.getText() == "") {
+            JOptionPane.showMessageDialog(this, "Can't set an empty Meaning for a Term");
+            return;
+        }
+        // Upsert to glossary
+        Client.getGlossary().upsert((String) entryList.getSelectedValue(), currentMeaning.getText());
+    }                                     
+    /**
      * Event handler for the Connect/Disconnect button. It connects or
      * disconnects from the Server.
      *
@@ -443,7 +477,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
  
 //GEN-LAST:event_bNewActionPerformed
 
-   /**
+    /**
      * Recalculates the value of the current meaning in the text area
      */
     public void resetCurrentMeaning() {
