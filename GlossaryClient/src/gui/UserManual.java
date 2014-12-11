@@ -1,8 +1,13 @@
 package gui;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import util.FileUtil;
 
 /**
@@ -18,7 +23,18 @@ public class UserManual extends javax.swing.JFrame {
         initComponents();
         // Display the window at the center of the screen (fixes error on linux)
         setLocationRelativeTo(null);
-        // Load files in the Manual
+        tabs.addChangeListener(new ChangeListener() {
+            
+            // Every time the selected Tab is changed...
+            
+            @Override
+            public void stateChanged(ChangeEvent ce) {
+                // We're sure it's a JScrollPane because we only have JScrollPanes
+                JScrollPane pane = ((JScrollPane)tabs.getSelectedComponent());
+                // Reset the Scrollbar so it shows the start of the file
+                pane.getVerticalScrollBar().setValue(pane.getVerticalScrollBar().getMinimum());
+            }
+        });
         loadManual("UserManual");
     }
 
@@ -46,13 +62,18 @@ public class UserManual extends javax.swing.JFrame {
      * @param text the HTML to put in the tab
      */
     public void addHtmlTab(String name, String text) {
-        JScrollPane pane = new JScrollPane();
-        JTextPane htmlText = new JTextPane();
-        pane.setViewportView(htmlText);
-        htmlText.setContentType("text/html");
-        htmlText.setText(text);
-        htmlText.setEditable(false);
-        tabs.addTab(name, pane);
+        JScrollPane container = new JScrollPane();
+        JTextPane htmlViewer = new JTextPane();
+        // Put htmlviewer inside container so the user can scroll
+        container.setViewportView(htmlViewer);
+        // Show Vertical Scrollbar only if needed
+        container.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        // set the HTML viewer settings
+        htmlViewer.setContentType("text/html");
+        htmlViewer.setText(text);
+        htmlViewer.setEditable(false);
+        // Finally add the tab with the container
+        tabs.addTab(name, container);
     }
 
     /**

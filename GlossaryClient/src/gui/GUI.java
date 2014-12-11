@@ -74,15 +74,16 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      */
     public void updateWindowInformation() {
         String title = "Glossary";
+        String stat = "";
         boolean offline = true;
         if (Client.get().getConnection().isConnected()) {
             offline = false;
             // Connected to Server
             title += " - Connected";
             net.setText("Disconnect");
-            status.setText("Connected to "
+            stat += "Connected to "
                     + Client.get().getConnection().getAddress()
-                    + ":" + Client.get().getConnection().getPort());
+                    + ":" + Client.get().getConnection().getPort();
         } else {
             net.setText("Connect");
         }
@@ -90,7 +91,9 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             offline = false;
             // Hosting
             title += " - Hosting";
-            status.setText("Hosting on port " + Client.get().getAdHocServer().getPort());
+            stat += (stat.isEmpty() ? "" : "- ")
+                    + "Hosting on port "
+                    + Client.get().getAdHocServer().getPort();
             host.setText("Stop Hosting");
         } else {
             host.setText("Host");
@@ -98,17 +101,16 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         if (offline) {
             // Offline
             title += " - Offline";
+            stat += "Offline";
             net.setText("Connect");
             host.setText("Host");
-            status.setText("Offline");
         }
         if (Client.get().getGlossary().isAutosaveOn()) {
             // Autosaving
-            String s = " - " + FileUtil.relativePathFor(Client.get().getGlossary().getFile());
-            title += s;
-            status.setText(status.getText() + s);
+            stat += " - " + FileUtil.relativePathFor(Client.get().getGlossary().getFile());
         }
         setTitle(title);
+        status.setText(stat);
     }
 
     @SuppressWarnings("unchecked")
@@ -143,9 +145,14 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         net = new javax.swing.JMenuItem();
         host = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Glossary");
         setMinimumSize(new java.awt.Dimension(400, 300));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         entryList.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         jScrollPane1.setViewportView(entryList);
@@ -373,7 +380,11 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt the event
      */
     private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
+        if(!GUIUtil.ask("Are you sure you want to Exit?")) return;
         this.dispose();
+        Client.get().getConnection().disconnect();
+        Client.get().getAdHocServer().stop();
+        System.exit(0);
     }//GEN-LAST:event_exitActionPerformed
 
     /**
@@ -580,6 +591,13 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             new Thread(Client.get().getAdHocServer()).start();
         }
     }//GEN-LAST:event_hostActionPerformed
+/**
+ * Event handler for when the User clicks the X button on the window (exit).
+ * @param evt 
+ */
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        exitActionPerformed(null);
+    }//GEN-LAST:event_formWindowClosing
     /**
      * Don't remove this method because if you do netbeans will change the
      * GUI.form and the GUI will not run. I tried to fix this, could not do it!
