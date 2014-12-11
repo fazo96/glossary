@@ -93,7 +93,7 @@ public class Client {
         clientManager.setCommandParser(parser);
         clientManager.setGlossary(glossary);
         // Prepare adhocserver
-        adHocServer = new Server(4000, glossary, parser, clientManager){
+        adHocServer = new Server(4000, glossary, parser, clientManager) {
 
             @Override
             public void onStartListening() {
@@ -102,14 +102,24 @@ public class Client {
 
             @Override
             public void onError(Exception e) {
-                GUIUtil.tellError("There was a problem starting the server:\n"+e);
+                GUIUtil.tellError("There was a problem starting the server:\n" + e);
             }
-        
+
         };
         // Start GUI
         gui = new GUI();
         gui.setVisible(true);
 
+    }
+
+    /**
+     * True if the client is hosting a server or is connected to a server or
+     * both.
+     *
+     * @return boolean
+     */
+    public boolean isOnline() {
+        return connection.isConnected() || adHocServer.isListening();
     }
 
     public GUI getGUI() {

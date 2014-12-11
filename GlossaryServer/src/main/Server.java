@@ -18,7 +18,7 @@ public class Server implements Runnable {
 
     private final Glossary glossary;
     private final CommandParser parser;
-    private final int port;
+    private int port;
     private boolean listening;
     private ClientManager clientManager;
     private ServerSocket ss;
@@ -133,12 +133,37 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Return the port that the server will listen to when it starts.
+     *
+     * @return int
+     */
     public int getPort() {
         return port;
     }
 
+    /**
+     * Returns the port that the server is CURRENTLY listening to.
+     *
+     * @return int
+     */
+    public int getCurrentPort() {
+        if (ss == null) {
+            return port;
+        }
+        return ss.getLocalPort();
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     public boolean isListening() {
         return listening;
+    }
+
+    public ClientManager getClientManager() {
+        return clientManager;
     }
 
     /**
@@ -168,6 +193,7 @@ public class Server implements Runnable {
 
     /**
      * Called when the server failed to start
+     *
      * @param e the error that caused the event to fire
      */
     public void onError(Exception e) {
