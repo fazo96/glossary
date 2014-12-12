@@ -91,4 +91,14 @@ public class ClientManager {
         this.parser = parser;
     }
 
+    /**
+     * Tells how many connected clients are managed by this ClientManager
+     *
+     * @return integer
+     */
+    public int count() {
+        synchronized (clients) {
+            return clients.size();
+        }
+    }
 }

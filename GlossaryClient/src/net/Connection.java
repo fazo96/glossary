@@ -172,19 +172,61 @@ public class Connection implements Runnable {
     }
 
     /**
-     * Called just after the first message from this session with the server
-     * has been received
+     * Called just after the first message from this session with the server has
+     * been received
      */
     public void onFirstMessage() {
         // This method exists to be overridden
     }
 
+    /**
+     * Returns the IP the Connection will connect to when it starts.
+     *
+     * @return String
+     */
     public String getAddress() {
         return address;
     }
 
+    /**
+     * Returns the IP the Connection is CURRENTLY connected to.
+     *
+     * @return String
+     */
+    public String getCurrentAddress() {
+        if (!connected || socket == null || socket.isClosed()) {
+            return getAddress();
+        }
+        return socket.getInetAddress().getHostAddress();
+    }
+
+    /**
+     * Returns the Port the Connection will connect to when it starts.
+     *
+     * @return the port
+     */
     public int getPort() {
         return port;
+    }
+
+    /**
+     * Returns the Port the Connection is CURRENTLY connected to.
+     *
+     * @return the port
+     */
+    public int getCurrentPort() {
+        if (!connected || socket == null || socket.isClosed()) {
+            return getPort();
+        }
+        return socket.getPort();
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
 }

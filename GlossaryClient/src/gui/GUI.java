@@ -31,6 +31,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      */
     public GUI() {
         initComponents();
+        // Load settings
+        settingsWindow = new Settings();
         // Init some other window components.
         updateWindowInformation();
         valueChanged(null);
@@ -82,8 +84,8 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             title += " - Connected";
             net.setText("Disconnect");
             stat += "Connected to "
-                    + Client.get().getConnection().getAddress()
-                    + ":" + Client.get().getConnection().getPort();
+                    + Client.get().getConnection().getCurrentAddress()
+                    + ":" + Client.get().getConnection().getCurrentPort();
         } else {
             net.setText("Connect");
         }
@@ -93,7 +95,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             title += " - Hosting";
             stat += (stat.isEmpty() ? "" : "- ")
                     + "Hosting on port "
-                    + Client.get().getAdHocServer().getPort();
+                    + Client.get().getAdHocServer().getCurrentPort();
             host.setText("Stop Hosting");
         } else {
             host.setText("Host");
@@ -380,7 +382,9 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt the event
      */
     private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
-        if(!GUIUtil.ask("Are you sure you want to Exit?")) return;
+        if (Client.get().isOnline() && !GUIUtil.ask("Are you sure you want to Exit?")) {
+            return;
+        }
         this.dispose();
         Client.get().getConnection().disconnect();
         Client.get().getAdHocServer().stop();
@@ -393,9 +397,6 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt the event
      */
     private void settingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsActionPerformed
-        if (settingsWindow == null) {
-            settingsWindow = new Settings();
-        }
         settingsWindow.setVisible(true);
     }//GEN-LAST:event_settingsActionPerformed
 
@@ -574,8 +575,11 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      */
     private void hostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hostActionPerformed
         if (Client.get().getAdHocServer().isListening()) {
-            // Server open
-            if (GUIUtil.ask("Are you sure you want to stop Hosting?")) {
+            // Server is open
+            if (GUIUtil.ask("Are you sure you want to stop Hosting"
+                    + " and forcefully disconnect "
+                    + Client.get().getAdHocServer().getClientManager().count()
+                    + " users?")) {
                 // Close server
                 Client.get().getAdHocServer().stop();
                 updateWindowInformation();
@@ -591,10 +595,11 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             new Thread(Client.get().getAdHocServer()).start();
         }
     }//GEN-LAST:event_hostActionPerformed
-/**
- * Event handler for when the User clicks the X button on the window (exit).
- * @param evt 
- */
+    /**
+     * Event handler for when the User clicks the X button on the window (exit).
+     *
+     * @param evt
+     */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         exitActionPerformed(null);
     }//GEN-LAST:event_formWindowClosing

@@ -5,17 +5,98 @@
  */
 package gui;
 
+import main.Client;
+import util.FileUtil;
+import util.GUIUtil;
+
 /**
  *
  * @author Gian
  */
 public class Settings extends javax.swing.JFrame {
 
+    private String path = "settings.txt";
+    private int port;
+    private String address;
+    private boolean firstTime;
+
     /**
      * Creates new form Settings
      */
     public Settings() {
         initComponents();
+        if (!load()) {
+            // No settings? then it's the first time the user uses the Glossary
+            firstTime = true;
+            resetDefaults();
+            GUIUtil.tell("FIRST TIME!");
+        } else {
+            firstTime = false;
+            apply();
+        }
+    }
+
+    /**
+     * Resets default settings
+     */
+    public void resetDefaults() {
+        address = "localhost";
+        port = 4000;
+        save();
+        apply();
+    }
+
+    /**
+     * Applies the settings to the components of the client
+     */
+    public void apply() {
+        Client.get().getConnection().setAddress(address);
+        Client.get().getConnection().setPort(port);
+        Client.get().getAdHocServer().setPort(port);
+        // Apply to GUI:
+        ipText.setText(address);
+        portText.setText("" + port);
+    }
+
+    public boolean load() {
+        String s = FileUtil.readFile(path);
+        if (s == null) {
+            return false;
+        }
+        String ss[] = s.trim().split(":");
+        if (ss.length != 2) {
+            return false;
+        }
+        address = ss[0];
+        try {
+            port = Integer.parseInt(ss[1]);
+        } catch (NumberFormatException e) {
+            // Port invalid
+            return false;
+        }
+        return true;
+    }
+
+    public boolean save() {
+        return FileUtil.writeFile(path, address + ":" + port);
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+        save();
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+        save();
     }
 
     /**
@@ -32,17 +113,18 @@ public class Settings extends javax.swing.JFrame {
         portLabel = new javax.swing.JLabel();
         ipText = new javax.swing.JTextField();
         portText = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        bReset = new javax.swing.JButton();
+        bSave = new javax.swing.JButton();
 
         setTitle("Settings");
-        setMaximumSize(new java.awt.Dimension(220, 155));
-        setMinimumSize(new java.awt.Dimension(220, 155));
-        setPreferredSize(new java.awt.Dimension(220, 155));
+        setMaximumSize(new java.awt.Dimension(220, 150));
+        setMinimumSize(new java.awt.Dimension(220, 150));
+        setPreferredSize(new java.awt.Dimension(250, 150));
+        setResizable(false);
 
         jPanel1.setMaximumSize(new java.awt.Dimension(200, 150));
         jPanel1.setMinimumSize(new java.awt.Dimension(200, 150));
-        jPanel1.setPreferredSize(new java.awt.Dimension(220, 117));
+        jPanel1.setPreferredSize(new java.awt.Dimension(220, 150));
 
         ipLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         ipLabel.setText("IP address");
@@ -50,52 +132,60 @@ public class Settings extends javax.swing.JFrame {
         portLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         portLabel.setText("Port");
 
-        ipText.setText("IP");
         ipText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ipTextActionPerformed(evt);
             }
         });
 
-        portText.setText("Port");
+        portText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                portTextActionPerformed(evt);
+            }
+        });
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        jButton1.setText("Reset");
-        jButton1.setMaximumSize(new java.awt.Dimension(65, 23));
-        jButton1.setMinimumSize(new java.awt.Dimension(65, 23));
-        jButton1.setPreferredSize(new java.awt.Dimension(65, 23));
+        bReset.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        bReset.setText("Reset");
+        bReset.setMaximumSize(new java.awt.Dimension(65, 23));
+        bReset.setMinimumSize(new java.awt.Dimension(65, 23));
+        bReset.setPreferredSize(new java.awt.Dimension(65, 23));
+        bReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bResetActionPerformed(evt);
+            }
+        });
 
-        jButton2.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        jButton2.setText("Save");
-        jButton2.setMaximumSize(new java.awt.Dimension(65, 23));
-        jButton2.setMinimumSize(new java.awt.Dimension(65, 23));
-        jButton2.setPreferredSize(new java.awt.Dimension(65, 23));
+        bSave.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        bSave.setText("Save");
+        bSave.setMaximumSize(new java.awt.Dimension(65, 23));
+        bSave.setMinimumSize(new java.awt.Dimension(65, 23));
+        bSave.setPreferredSize(new java.awt.Dimension(65, 23));
+        bSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bSaveActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(bReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 96, Short.MAX_VALUE)
+                        .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(portLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ipLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(19, 19, 19)
-                                .addComponent(portLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(ipLabel)
-                                .addGap(18, 18, 18)))
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(portText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ipText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(18, 18, 18))
+                            .addComponent(ipText)
+                            .addComponent(portText))))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -104,44 +194,73 @@ public class Settings extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ipLabel)
                     .addComponent(ipText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14)
+                .addGap(24, 24, 24)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(portLabel)
                     .addComponent(portText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(bReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void ipTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ipTextActionPerformed
-        // TODO add your handling code here:
+        bSaveActionPerformed(evt);
     }//GEN-LAST:event_ipTextActionPerformed
+
+    private void bResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bResetActionPerformed
+        ipText.setText("localhost");
+        portText.setText("" + port);
+    }//GEN-LAST:event_bResetActionPerformed
+
+    private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
+        address = ipText.getText();
+        try {
+            port = Integer.parseInt(portText.getText());
+            if (port > 65535 || port < 0) {
+                throw new NumberFormatException("Invalid port number");
+            }
+        } catch (NumberFormatException e) {
+            // Port invalid
+            GUIUtil.tellError("Port number invalid");
+            return;
+        }
+        apply();
+        if (save()) {
+            GUIUtil.tell("Settings saved successfully");
+        } else {
+            GUIUtil.tellError("Failed to save Settings");
+        }
+    }//GEN-LAST:event_bSaveActionPerformed
+
+    private void portTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portTextActionPerformed
+        bSaveActionPerformed(evt);
+    }//GEN-LAST:event_portTextActionPerformed
 
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bReset;
+    private javax.swing.JButton bSave;
     private javax.swing.JLabel ipLabel;
     private javax.swing.JTextField ipText;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel portLabel;
     private javax.swing.JTextField portText;
