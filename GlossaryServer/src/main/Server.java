@@ -2,6 +2,7 @@ package main;
 
 import glossary.CommandParser;
 import glossary.Glossary;
+import glossary.GlossaryList;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.logging.Level;
@@ -36,7 +37,7 @@ public class Server implements Runnable {
         // Initialize ClientManager
         clientManager = new ClientManager(null, null);
         // Intialize Server glossary and load from file.
-        glossary = new Glossary(autoSaveFile) {
+        glossary = new GlossaryList(autoSaveFile) {
 
             @Override
             public void onDelete(String term) {

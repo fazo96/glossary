@@ -8,44 +8,10 @@ import util.FileUtil;
 /**
  * This object represents a Glossary
  */
-public class Glossary {
-
-    private static Comparator<String[]> comparator;
-
-    private final ArrayList<String[]> list;
+public abstract class Glossary {
+    
     private boolean autosave;
     private String file;
-
-    /**
-     * Creates a new Glossary loading from given file and autosaving to it
-     *
-     * @param file the file to sync with the glossary
-     */
-    public Glossary(String file) {
-        this(); // Call other costructor
-        if (file != null && !file.isEmpty()) {
-            this.file = file;
-            this.autosave = true;
-            load(file);
-        }
-    }
-
-    public Glossary() {
-        if (comparator == null) {
-            // Initialize the comparator to sort the Glossary
-            comparator = new Comparator<String[]>() {
-                @Override
-                public int compare(String[] o1, String[] o2) {
-                    return o1[0].compareTo(o2[0]);
-                }
-            };
-        }
-        // Initialize the list of glossary entries with a Thread-Safe list.
-        list = new ArrayList<String[]>();
-        // Set initial vars
-        file = null;
-        autosave = false;
-    }
 
     /**
      * Inserts or updates (if it already existed) a term.
@@ -54,34 +20,7 @@ public class Glossary {
      * @param meaning the string representing the meaning of the term
      * @return true if there was a change in the glossary.
      */
-    public boolean upsert(String term, String meaning) {
-        int index = -1;
-        // Fix the strings
-        term = term.trim().toLowerCase();
-        meaning = meaning.trim();
-        // search if the term already exists
-        if ((index = find(term)) >= 0) { // Existing term
-            if (meaningOf(index).equals(meaning)) {
-                // The term to upsert is exactly the same in the Glossary!
-                return false;
-            }
-            synchronized (list) {
-                list.get(index)[1] = meaning;
-            }
-            System.out.println("[Glossary] Updating meaning for " + term);
-        } else { // New term
-            String[] s = {term, meaning};
-            synchronized (list) {
-                list.add(s);
-            }
-            System.out.println("[Glossary] Adding new term: " + term);
-        }
-        onUpsert(term, meaning);
-        if (autosave) {
-            save();
-        }
-        return true;
-    }
+    public abstract boolean upsert(String term, String meaning);
 
     /**
      * Variant of Upsert that takes a String and parses the term and the
@@ -135,18 +74,7 @@ public class Glossary {
      * @param term the term to search
      * @return integer representing the index of the term in the glossary
      */
-    public int find(String term) {
-        // Fix the string
-        term = term.trim();
-        synchronized (list) {
-            for (int i = 0; i < list.size(); i++) { // Each element of the list
-                if (list.get(i)[0].equalsIgnoreCase(term)) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
+    public abstract int find(String term);
 
     /**
      * Returns the record at the given index
@@ -154,11 +82,7 @@ public class Glossary {
      * @param index the index of the record to get
      * @return the resulting record or null if it doesn't exist
      */
-    public String[] find(int index) {
-        synchronized (list) {
-            return list.get(index);
-        }
-    }
+    public abstract String[] find(int index);
 
     /**
      * Returns the meaning of the given term
@@ -178,17 +102,7 @@ public class Glossary {
      * @param index the index of the term
      * @return the meaning of the term or null if it doesn't exist
      */
-    public String meaningOf(int index) {
-        if (index < 0) {
-            return null;
-        }
-        synchronized (list) {
-            if (index >= list.size()) {
-                return null;
-            }
-            return list.get(index)[1];
-        }
-    }
+    public abstract String meaningOf(int index);
 
     /**
      * Deletes a term from the glossary if it exists
@@ -196,53 +110,19 @@ public class Glossary {
      * @param term the term to delete
      * @return true if it existed, false otherwise
      */
-    public boolean delete(String term) {
-        int index = find(term);
-        if (index < 0) {
-            return false;
-        }
-        synchronized (list) {
-            list.remove(index);
-        }
-        System.out.println("[Glossary] Deleting " + term);
-        onDelete(term);
-        if (autosave) {
-            save();
-        }
-        return true;
-    }
-
-    /**
-     * The number of terms in the glossary
-     *
-     * @return an integer
-     */
-    public int termCount() {
-        synchronized (list) {
-            return list.size();
-        }
-    }
+    public abstract boolean delete(String term);
 
     /**
      * Removes everything from the glossary. Be careful!
      */
-    public void clear() {
-        synchronized (list) {
-            list.clear();
-        }
-        onClear();
-    }
+    public abstract void clear();
 
     /**
      * Returns the size of the Glossary
      *
      * @return the size of the glossary.
      */
-    public int size() {
-        synchronized (list) {
-            return list.size();
-        }
-    }
+    public abstract int size();
 
     /**
      * Reads a file and loads the terms in it into the glossary.
@@ -271,22 +151,14 @@ public class Glossary {
     }
 
     /**
-     * Returns the entire Glossary as a single String.
+     * Exports the entire Glossary to a single String.
      *
      * @return a String.
      */
-    public String asString() {
-        String content = "";
-        synchronized (list) {
-            for (String s[] : list) {
-                content += s[0] + ":" + s[1].replace('\n', ' ') + "\n";
-            }
-        }
-        return content;
-    }
+    public abstract String asString();
 
     /**
-     * Takes a String with multiple terms and parses them.
+     * Imports glossary terms from the given string.
      *
      * @param content the source string
      * @return the number of terms successfully loaded.
@@ -332,16 +204,7 @@ public class Glossary {
      *
      * @return a copy of the glossary in the format of a matrix of strings.
      */
-    public String[][] getCopy() {
-        String a[][] = null;
-        synchronized (list) {
-            a = new String[list.size()][2];
-            for (int i = 0; i < a.length; i++) {
-                a[i] = list.get(i);
-            }
-        }
-        return a;
-    }
+    public abstract String[][] getCopy();
 
     /**
      * Get an Array of the words in this Glossary filtered by the given String
@@ -349,27 +212,7 @@ public class Glossary {
      * @param filter the filter to find the words
      * @return the words found
      */
-    public String[] getWordList(String filter) {
-        Object[] ol;
-        synchronized (list) {
-            if (filter == null) {
-                ol = list.toArray();
-            } else {
-                // Filter all the words
-                ol = list.stream()
-                        .filter(
-                                (String[] s)
-                                -> filter == null || (s[0] != null && s[0].contains(filter))
-                        ).toArray();
-            }
-        }
-        // Convert the Array
-        String a[] = new String[ol.length];
-        for (int i = 0; i < a.length; i++) {
-            a[i] = ((String[]) ol[i])[0];
-        }
-        return a;
-    }
+    public abstract String[] getWordList(String filter);
 
     /**
      * Like getWordList(filter) but sorted alphabetically.
@@ -438,37 +281,22 @@ public class Glossary {
     }
 
     /**
-     * Sorts the Glossary by term name.
-     */
-    public void sort() {
-        synchronized (list) {
-            list.sort(comparator);
-        }
-    }
-
-    /**
      * This method is called when a term is upserted to the Glossary.
      *
      * @param term the term that was upserted
      * @param meaning the meaning of the upserted term
      */
-    public void onUpsert(String term, String meaning) {
-        // This method is created to be overridden.
-    }
+    public abstract void onUpsert(String term, String meaning);
 
     /**
      * This method is called when a term is deleted from the Glossary.
      *
      * @param term the term that was deleted
      */
-    public void onDelete(String term) {
-        // This method is created to be overridden.
-    }
+    public abstract void onDelete(String term);
 
     /**
      * This method is called when the glossary is cleared.
      */
-    public void onClear() {
-        // This method is created to be overridden.}
-    }
+    public abstract void onClear();
 }

@@ -2,6 +2,7 @@ package main;
 
 import glossary.CommandParser;
 import glossary.Glossary;
+import glossary.GlossaryList;
 import gui.GUI;
 import javax.swing.UIManager;
 import net.ClientManager;
@@ -50,7 +51,7 @@ public class Client {
          * sent to the server and displayed in the GUI.
          */
         // Prepare glossary
-        glossary = new Glossary() {
+        glossary = new GlossaryList() {
 
             @Override
             public void onDelete(String term) {

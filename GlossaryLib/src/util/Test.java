@@ -1,6 +1,7 @@
 package util;
 
 import glossary.Glossary;
+import glossary.GlossaryList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,7 +20,20 @@ public class Test {
     public static void main(String args[]) {
         try {
             // Catch exception from the test
-            testGlossary();
+            testGlossary(new GlossaryList("glossary.txt") {
+                
+                @Override
+                public void onUpsert(String term, String meaning) {
+                }
+                
+                @Override
+                public void onDelete(String term) {
+                }
+                
+                @Override
+                public void onClear() {
+                }
+            });
         } catch (Exception ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -29,8 +43,7 @@ public class Test {
      * Some tests for the Glossary class. If they are not successfull, an
      * exception is thrown
      */
-    private static void testGlossary() throws Exception {
-        Glossary glossary = new Glossary("file_test.txt");
+    private static void testGlossary(Glossary glossary) throws Exception {
         glossary.setAutosave(false);
         glossary.upsert("test", "nope");
         if (!glossary.meaningOf("test").equals("nope")) {
@@ -42,7 +55,7 @@ public class Test {
         }
         glossary.save();
         glossary.delete("test");
-        if (glossary.termCount() != 0) {
+        if (glossary.size() != 0) {
             throw new Exception("Delete doesn't work");
         }
         glossary.load();
