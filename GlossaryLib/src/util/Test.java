@@ -5,6 +5,7 @@ import glossary.GlossaryDB;
 import glossary.GlossaryList;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +27,9 @@ public class Test {
             // Catch exception from the test
             testGlossary(new GlossaryList("glossary.txt"));
             Class.forName("com.mysql.jdbc.Driver");
-            c = DriverManager.getConnection("jdbc:mysql://10.0.0.11:3306/glossary");
+            Properties cp = new Properties();
+            cp.put("user", "root");
+            c = DriverManager.getConnection("jdbc:mysql://10.0.0.11:3306/glossary",cp);
             testGlossary(new GlossaryDB(c));
         } catch (Exception ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
