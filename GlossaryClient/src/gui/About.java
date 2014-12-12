@@ -13,6 +13,7 @@ public class About extends javax.swing.JFrame {
      */
     public About() {
         initComponents();
+        this.setLocationRelativeTo(null);
         jTextPane1.setText(FileUtil.readFile("docs/about.html"));
     }
 

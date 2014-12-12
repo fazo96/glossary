@@ -63,7 +63,7 @@ public class Connection implements Runnable {
      * @return true if successful
      */
     public boolean connect() {
-        disconnect(); // make sure we're disconnected
+        if(connected) disconnect();
         try {
             socket = new Socket(address, port);
             oos = new ObjectOutputStream(socket.getOutputStream());
