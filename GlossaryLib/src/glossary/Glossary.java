@@ -93,7 +93,7 @@ public abstract class Glossary {
      * @param term the term to search
      * @return integer representing the index of the term in the glossary
      */
-    public abstract int find(String term);
+    protected abstract int find(String term);
 
     /**
      * Returns the record at the given index
@@ -101,7 +101,7 @@ public abstract class Glossary {
      * @param index the index of the record to get
      * @return the resulting record or null if it doesn't exist
      */
-    public abstract String[] find(int index);
+    protected abstract String[] find(int index);
 
     /**
      * Returns the meaning of the given term
@@ -121,7 +121,7 @@ public abstract class Glossary {
      * @param index the index of the term
      * @return the meaning of the term or null if it doesn't exist
      */
-    public abstract String meaningOf(int index);
+    protected abstract String meaningOf(int index);
 
     /**
      * Deletes a term from the glossary if it exists
