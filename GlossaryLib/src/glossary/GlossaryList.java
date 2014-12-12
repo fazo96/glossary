@@ -11,13 +11,12 @@ public class GlossaryList extends Glossary {
     private static Comparator<String[]> comparator;
 
     private final ArrayList<String[]> list;
-    private boolean autosave;
-    private String file;
 
     /**
-     * Creates a new Glossary loading from given file and autosaving to it
+     * Creates a new Glossary that loads from the given file then autosaves
+     * every change.
      *
-     * @param file the file to sync with the glossary
+     * @param file the file associated to this glossary
      */
     public GlossaryList(String file) {
         this(); // Call other costructor
@@ -28,6 +27,9 @@ public class GlossaryList extends Glossary {
         }
     }
 
+    /**
+     * Creates an empty Glossary
+     */
     public GlossaryList() {
         if (comparator == null) {
             // Initialize the comparator to sort the Glossary
