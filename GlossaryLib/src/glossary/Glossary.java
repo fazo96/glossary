@@ -11,9 +11,7 @@ public abstract class Glossary {
     protected boolean autosave;
     protected String file;
 
-    /**
-     * Creates an empty Glossary
-     */
+    
     public Glossary() {
         autosave = false;
         file = null;
