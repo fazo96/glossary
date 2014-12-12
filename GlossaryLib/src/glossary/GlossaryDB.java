@@ -25,8 +25,8 @@ public class GlossaryDB extends Glossary {
         if (!db.isValid(3)) {
             throw new SQLException("Connection to DB not valid");
         }
-        c.createStatement().execute("create table glossary if not exist "
-                + "(term CHAR(50) PRIMARY KEY, meaning CHAR(500))");
+        c.createStatement().execute("create table if not exists glossary.glossary "
+                + "(term CHAR(50), meaning CHAR(255));");
     }
 
     /**
@@ -47,8 +47,18 @@ public class GlossaryDB extends Glossary {
     @Override
     public boolean upsert(String term, String meaning) {
         term = term.trim().toLowerCase().replace("\"", "\\\"");
-        meaning = meaning.trim().replace("\"", "\\\"");;
+        meaning = meaning.trim().replace("\"", "\\\"");
         int i;
+        try {
+            i = db.createStatement().executeUpdate("UPDATE glossary set meaning = \"" + meaning + "\" where term = \"" + term + "\";");
+        } catch (SQLException ex) {
+            // Failed
+            Logger.getLogger(GlossaryDB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        if (i > 0) {
+            return true; // Updated original meaning
+        }
         try {
             i = db.createStatement().executeUpdate("INSERT INTO GLOSSARY values (\"" + term + "\",\"" + meaning + "\");");
         } catch (SQLException ex) {
@@ -82,7 +92,7 @@ public class GlossaryDB extends Glossary {
         term = term.trim().toLowerCase();
         int i;
         try {
-            i = db.createStatement().executeUpdate("DELETE * FROM GLOSSARY where term=\"" + term + "\")");
+            i = db.createStatement().executeUpdate("DELETE FROM GLOSSARY where term=\"" + term + "\";");
         } catch (SQLException ex) {
             // Failed
             Logger.getLogger(GlossaryDB.class.getName()).log(Level.SEVERE, null, ex);
@@ -97,7 +107,7 @@ public class GlossaryDB extends Glossary {
     @Override
     public void clear() {
         try {
-            db.createStatement().executeUpdate("DELETE * FROM GLOSSARY");
+            db.createStatement().executeUpdate("DELETE FROM GLOSSARY;");
             onClear();
         } catch (SQLException ex) {
             // Failed
@@ -181,11 +191,22 @@ public class GlossaryDB extends Glossary {
         return getWordList(filter, true);
     }
 
+    /**
+     * FILTER BROKEN
+     *
+     * @param filter
+     * @param sorted
+     * @return
+     */
     private String[] getWordList(String filter, boolean sorted) {
+        if (filter != null || !filter.isEmpty()) {
+            throw new UnsupportedOperationException("Filter not yet supported in GlossaryDB");
+        }
         String r[] = new String[size()];
         ResultSet result;
         try {
-            result = db.createStatement().executeQuery("SELECT term FROM GLOSSARY" + (sorted ? " order by term" : "") + ";");
+            result = db.createStatement().executeQuery(
+                    "SELECT term FROM GLOSSARY where " + (sorted ? " order by term" : "") + ";");
         } catch (SQLException ex) {
             // Failed
             Logger.getLogger(GlossaryDB.class.getName()).log(Level.SEVERE, null, ex);
@@ -203,6 +224,27 @@ public class GlossaryDB extends Glossary {
             // Loop has stopped
         }
         return r;
+    }
+
+    @Override
+    public String meaningOf(String term) {
+        term = term.trim().toLowerCase();
+        ResultSet result;
+        try {
+            result = db.createStatement().executeQuery("SELECT * FROM GLOSSARY WHERE term=\"" + term + "\";");
+        } catch (SQLException ex) {
+            // Failed
+            Logger.getLogger(GlossaryDB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        try {
+            if (result.first()) {
+                return result.getString("meaning");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(GlossaryDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
