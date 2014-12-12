@@ -1,17 +1,36 @@
 package glossary;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import util.FileUtil;
 
 /**
  * This object represents a Glossary
  */
 public abstract class Glossary {
-    
-    private boolean autosave;
-    private String file;
+
+    protected boolean autosave;
+    protected String file;
+
+    /**
+     * Creates an empty Glossary
+     */
+    public Glossary() {
+        autosave = false;
+        file = null;
+    }
+
+    /**
+     * Creates a new Glossary that loads from the given file then autosaves
+     * every change.
+     *
+     * @param file the file associated to this glossary
+     */
+    public Glossary(String file) {
+        this();
+        this.file = file;
+        load();
+        autosave = true;
+    }
 
     /**
      * Inserts or updates (if it already existed) a term.
