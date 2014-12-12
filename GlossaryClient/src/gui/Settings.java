@@ -25,11 +25,14 @@ public class Settings extends javax.swing.JFrame {
      */
     public Settings() {
         initComponents();
+        this.setLocationRelativeTo(null);
         if (!load()) {
             // No settings? then it's the first time the user uses the Glossary
             firstTime = true;
             resetDefaults();
-            GUIUtil.tell("FIRST TIME!");
+            GUIUtil.tell("Welcome to Glossary.\nIf you need any help,"
+                    + " the User Manual is available in"
+                    + " 'File' -> 'User Manual'");
         } else {
             firstTime = false;
             apply();
@@ -119,7 +122,6 @@ public class Settings extends javax.swing.JFrame {
         setTitle("Settings");
         setMaximumSize(new java.awt.Dimension(220, 150));
         setMinimumSize(new java.awt.Dimension(220, 150));
-        setPreferredSize(new java.awt.Dimension(250, 150));
         setResizable(false);
 
         jPanel1.setMaximumSize(new java.awt.Dimension(200, 150));
@@ -202,7 +204,7 @@ public class Settings extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(7, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -243,6 +245,7 @@ public class Settings extends javax.swing.JFrame {
         apply();
         if (save()) {
             GUIUtil.tell("Settings saved successfully");
+            this.setVisible(false);
         } else {
             GUIUtil.tellError("Failed to save Settings");
         }
