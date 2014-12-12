@@ -55,12 +55,14 @@ public class Client {
             @Override
             public void onDelete(String term) {
                 connection.send("DELETE:" + term);
+                adHocServer.getClientManager().sendToAll("DELETE:" + term, null);
                 client.getGUI().updateTermList();
             }
 
             @Override
             public void onUpsert(String term, String meaning) {
                 connection.send(term + ":" + meaning);
+                adHocServer.getClientManager().sendToAll(term + ":" + meaning, null);
                 client.getGUI().updateTermList();
             }
 
