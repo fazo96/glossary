@@ -1,67 +1,40 @@
-# Documentazione Glossario
+# Glossary
+
+Write a Glossary locally or share your work with anyone, anywhere, on any desktop computer.
 
 Enrico Fasoli, Gianluca Rocco, Roberto Dalipaj, Marco Carne, Raffaele Cristodaro, Sara Dendena
 
-## Funzionamento
+## How it works
 
-Il server mantiene la lista di tutte le parole con una stringa per la parola e una per il significato. I client si collegano e il server crea un thread per la comunicazione.
-Quando una parola viene inserita o modificata dal client viene aggiornata la lista e tutti i client ricevono l’aggiornamento via socket tcp.
+The server and the client each have a Glossary and they keep it in sync using our network protocol. The client has a built in "ad-hoc" server that can be used to quickly listen to connection from other clients.
+The headless Server can also operate using a MySQL database instead of a regular text file.
 
-_Record_: array di 2 String che rappresenta un termine e il suo significato.
+_Record_: an entry in the glossary is composed of a term and the meaning of the term.
 
-_Gestione thread safe_: i dati sono in una lista che tramite `Collections.synchronizedList` viene resa thread safe automaticamente da Java.
+_Thread safety_: all glossary operations are thread safe using java's built in critical section keyword "synchronized".
 
-_Protocollo_: vengono inviate stringhe per comunicare, il record viene inviato nel formato `parola: significato` con `parola` tutto minuscolo.
+_Protocol_: over the network, messages are sent in the form of strings with commands. There are two commands: a glossary upsert operation and a delete operation. Commands can only contain a single operation (so multiple commands are sent for multiple operations).
 
-_Interfaccia_:
-- lista di parole: clicco su una parola e vedo il significato e posso modificarlo.
-- filtro: un campo di testo che posso usare per filtrare la lista
-- Possibilità di aggiungere, modificare o eliminare termini
+_Interface_:
+- list of terms: the list of terms in the current glossary
+- filter: used to search for a term or multiple terms
+- buttons: add, delete or update terms.
+- menus:
+    - change network settings
+    - import or export a glossary (using files)
+    - host an ad-hoc server
+    - connect to a server
 
-_Roadmap_ (percorso di sviluppo):
-- Server che carica le parole da file
-- Server che accetta le connessioni e gestisce i comandi
-- Client che invia comandi e riceve risposte
-- GUI Client
+## Implementation
 
-## Implementazione
+As stated before, everything is clear and commented in the code so you're free to look    around and understand how it was implemented. We suggest starting from the GlossaryLib,   then the server and finally the client.
 
-Documentazione a livello di classi e funzioni:
+## Workforce Organization
 
-### Server
+The project was organized using _Agile development_: every member of the group understands the "bigger picture" and although the work was initially split, it was more of a guideline then strict rules.
 
-- Server: accetta le connessioni (__Insieme__)
-- ClientHandler: un'instanza per ogni client con il suo thread. La classe
-contiene la lista dei client. (__Fasoli__)
-- File: utility per leggere e scrivere da file (__Insieme__)
-- Glossario: utility per modificare e leggere il glossario (__Fasoli__)
-  - Salvataggio e lettura da file
-
-### Client
-
-- GUI
-  - Finestra Principale (main class) per il glossario (__Rocco e Sara__)
-    - Deve avere dei metodi per aggiornare la lista dei termini del glossario
-    - Primo avvio (file di impostazioni assente):
-      - Creo file con opzioni di default
-      - avviso l'utente che deve configurare le opzioni
-      - informo l'utente sull'uso del Manuale
-    - Esportare il glossario su file in locale lato client
-    - Importare termini da file lato client
-  - Finestra opzioni (per configurare la connessione)
-    - Devono essere salvate e caricate da file
-  - Finestra manuale utente
-    - contiene diverse schede
-
-- Interfaccia di Rete per la connessione (classe Network)
-  - richiede un socket collegato col server
-  - deve ricevere messaggi dal server ed eseguire i comandi, aggiornando la GUI (thread separato)
-  - deve poter mandare messaggi al server
-
-### GlossarioLib
-
-è la libreria condivisa dal client e il server che contiene delle Classi comuni, tra cui:
-- FileUtil che permette di leggere e scrivere da file comodamente
-- Glossary che rappresenta il glossario
-
-__Nota Bene:__ la documentazione e il programma devono essere in inglese alla fine!
+This has a number of advantages:
+- _Equality_: every project member understands the bigger picture and can explain the whole program. 
+- _Shared knowledge_: thanks to the previous point (everyone must understand everything) all the code must be clear and commented. 
+- _Better collaboration_: a project member can fix, improve or change another member's work because thanks to Version Control (git) one can always revert any change operation and nothing is lost.
+- _Freedom_: every project member is free to improve or add something if he wants to or he has this big idea without creating problems.
