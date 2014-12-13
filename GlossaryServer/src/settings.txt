@@ -13,7 +13,7 @@ glossary_file: glossary.txt
 # The program will use a "glossary" table in the database (it will be
 # automatically created if it doesn't exist)
 
-#sql_server_address: 127.0.0.1
+#sql_server_address: localhost
 #sql_server_port: 3306
 #sql_database_name: glossary
 #sql_database_user: root
