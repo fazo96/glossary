@@ -382,7 +382,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      * @param evt the event
      */
     private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
-        if (Client.get().isOnline() && !GUIUtil.ask("Are you sure you want to Exit?")) {
+        if (!GUIUtil.ask("Are you sure you want to Exit?")) {
             return;
         }
         this.dispose();
