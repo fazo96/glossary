@@ -1,0 +1,22 @@
+# This is the settings file for the Glossary Server
+# Everything after a '#' character is a comment
+
+# The port to listen to. Must be a valid integer from 1 to 65535
+server_port: 4000
+
+# If this is not null the glossary will be autosaved to the file that matches
+# the path given here
+
+glossary_file: glossary.txt
+
+# Remove the '#' characters (comments) to activate the SQL Connection
+# The program will use a "glossary" table in the database (it will be
+# automatically created if it doesn't exist)
+
+#sql_server_address: 127.0.0.1
+#sql_server_port: 3306
+#sql_database_name: glossary
+#sql_database_user: root
+
+# If you connect to the SQL database the autosave feature will be disabled
+# because the data is already saved on the database!

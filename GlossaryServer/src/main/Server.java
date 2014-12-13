@@ -2,9 +2,13 @@ package main;
 
 import glossary.CommandParser;
 import glossary.Glossary;
+import glossary.GlossaryDB;
 import glossary.GlossaryList;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.ClientManager;
@@ -23,6 +27,51 @@ public class Server implements Runnable {
     private boolean listening;
     private ClientManager clientManager;
     private ServerSocket ss;
+
+    /**
+     * Creates a Server that uses a MySQL Database as backend for the Glossary
+     *
+     * @param hostname hostname of the dbms to connect to
+     * @param port the port of the dbms
+     * @param db the name of the database to use on the dbms
+     * @param username username to use for authentication on the dbms
+     * @throws Exception in case something fails with the database (very likely)
+     */
+    public Server(int port, String hostname, int sqlport, String db, String username) throws Exception {
+        this.port = port;
+        Connection c;
+        clientManager = new ClientManager(null, null);
+        Class.forName("com.mysql.jdbc.Driver");
+        Properties p = new Properties();
+        p.setProperty("user", username);
+        c = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + sqlport + "/" + db, p);
+        glossary = new GlossaryDB(c) {
+            @Override
+            public void onDelete(String term) {
+                clientManager.sendToAll("DELETE:" + term, null);
+            }
+
+            @Override
+            public void onUpsert(String term, String meaning) {
+                clientManager.sendToAll(term + ":" + meaning, null);
+            }
+        };
+        parser = new CommandParser() {
+            @Override
+            public void onDelete(String term) {
+                System.out.println("[CMD] DELETE " + term);
+                glossary.delete(term);
+            }
+
+            @Override
+            public void onUpsert(String term, String meaning) {
+                System.out.println("[CMD] UPSERT " + term + " " + meaning);
+                glossary.upsert(term, meaning);
+            }
+        };
+        clientManager.setCommandParser(parser);
+        clientManager.setGlossary(glossary);
+    }
 
     /**
      * Creates a new Server that listens to the given port.
