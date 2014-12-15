@@ -18,17 +18,17 @@ public class ConnectedClient implements Runnable {
     private ObjectInputStream ois = null;
     private ObjectOutputStream oos = null;
     private boolean connected;
-    private ClientManager ch;
+    private ClientManager cm;
 
     /**
-     * Creates a new Client Handler using a Socket that must be connected to a
+     * Creates a new Client Manager using a Socket that must be connected to a
      * client.
      *
      * @param socket the socket connected to a client
      */
-    public ConnectedClient(Socket socket, ClientManager ch) {
+    public ConnectedClient(Socket socket, ClientManager cm) {
         this.socket = socket;
-        this.ch = ch;
+        this.cm = cm;
         try {
             oos = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException ex) {
@@ -38,7 +38,7 @@ public class ConnectedClient implements Runnable {
         }
         // If everything went ok
         connected = true;
-        ch.register(this);
+        cm.register(this);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class ConnectedClient implements Runnable {
                     System.out.println("Received command:\n" + s + "\nFrom: "
                             + socket.getInetAddress().getHostAddress());
                     // Executing command:
-                    ch.getCommandParser().parse(s);
+                    cm.getCommandParser().parse(s);
                 } else {
                     // Record the event that we received an object with an
                     // unexpected Class.
@@ -124,7 +124,7 @@ public class ConnectedClient implements Runnable {
         if (!connected) {
             return; // Already stopped network activity
         }
-        ch.unregister(this);
+        cm.unregister(this);
         try {
             socket.close();
         } catch (IOException ex) {

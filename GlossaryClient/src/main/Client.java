@@ -58,6 +58,7 @@ public class Client {
                 connection.send("DELETE:" + term);
                 adHocServer.getClientManager().sendToAll("DELETE:" + term, null);
                 client.getGUI().updateTermList();
+                client.getGUI().valueChanged(null);
             }
 
             @Override
@@ -65,6 +66,7 @@ public class Client {
                 connection.send(term + ":" + meaning);
                 adHocServer.getClientManager().sendToAll(term + ":" + meaning, null);
                 client.getGUI().updateTermList();
+                client.getGUI().valueChanged(null);
             }
 
         };

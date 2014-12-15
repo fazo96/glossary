@@ -82,12 +82,12 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             offline = false;
             // Connected to Server
             title += " - Connected";
-            net.setText("Disconnect");
+            bConnect.setText("Disconnect");
             stat += "Connected to "
                     + Client.get().getConnection().getCurrentAddress()
                     + ":" + Client.get().getConnection().getCurrentPort();
         } else {
-            net.setText("Connect");
+            bConnect.setText("Connect");
         }
         if (Client.get().getAdHocServer().isListening()) {
             offline = false;
@@ -104,7 +104,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             // Offline
             title += " - Offline";
             stat += "Offline";
-            net.setText("Connect");
+            bConnect.setText("Connect");
             host.setText("Host");
         }
         if (Client.get().getGlossary().isAutosaveOn()) {
@@ -144,7 +144,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         edit = new javax.swing.JMenu();
         settings = new javax.swing.JMenuItem();
         network = new javax.swing.JMenu();
-        net = new javax.swing.JMenuItem();
+        bConnect = new javax.swing.JMenuItem();
         host = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -351,14 +351,14 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
         network.setText("Network");
 
-        net.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        net.setText("Connect");
-        net.addActionListener(new java.awt.event.ActionListener() {
+        bConnect.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        bConnect.setText("Connect");
+        bConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                netActionPerformed(evt);
+                bConnectActionPerformed(evt);
             }
         });
-        network.add(net);
+        network.add(bConnect);
 
         host.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
         host.setText("Host");
@@ -466,7 +466,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      *
      * @param evt the event
      */
-    private void netActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_netActionPerformed
+    private void bConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bConnectActionPerformed
         if (Client.get().getConnection().isConnected()) {
             if (GUIUtil.ask("Are you sure you want to disconnect?")) {
                 Client.get().getConnection().disconnect();
@@ -478,7 +478,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             }
         }
         updateWindowInformation();
-    }//GEN-LAST:event_netActionPerformed
+    }//GEN-LAST:event_bConnectActionPerformed
     /**
      * Event handler for Import button. It imports records from a file into the
      * Glossary.
@@ -625,6 +625,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem about;
+    private javax.swing.JMenuItem bConnect;
     private javax.swing.JButton bDelete;
     private javax.swing.JMenuItem bExport;
     private javax.swing.JMenuItem bImport;
@@ -646,7 +647,6 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JMenuItem manual;
     private javax.swing.JLabel meaning;
-    private javax.swing.JMenuItem net;
     private javax.swing.JMenu network;
     private javax.swing.JTextField search;
     private javax.swing.JMenuItem settings;
@@ -661,20 +661,26 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     public void valueChanged(ListSelectionEvent lse) {
         // delete button enabled only if at least 1 term is selected
         bDelete.setEnabled(!entryList.getSelectedValuesList().isEmpty());
-        if (entryList.getSelectedValuesList().size() == 1) {
-            // Can change the Meaning
-            currentMeaning.setText(Client.get().getGlossary().meaningOf((String) entryList.getSelectedValue()));
-            currentMeaning.setEditable(true);
-            bSave.setEnabled(true);
-            currentMeaning.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-            currentMeaning.setForeground(Color.BLACK);
-        } else {
-            // Can't change the meaning
-            currentMeaning.setEditable(false);
-            bSave.setEnabled(false);
-            currentMeaning.setText("Select a term");
+        if (Client.get().getGlossary().size() == 0) {
+            currentMeaning.setText("Welcome to Glossary!\nStart by creating a new term.");
             currentMeaning.setFont(new Font("Segoe UI", Font.ITALIC, 12));
             currentMeaning.setForeground(Color.GRAY);
+        } else {
+            if (entryList.getSelectedValuesList().size() == 1) {
+                // Can change the Meaning
+                currentMeaning.setText(Client.get().getGlossary().meaningOf((String) entryList.getSelectedValue()));
+                currentMeaning.setEditable(true);
+                bSave.setEnabled(true);
+                currentMeaning.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                currentMeaning.setForeground(Color.BLACK);
+            } else {
+                // Can't change the meaning
+                currentMeaning.setEditable(false);
+                bSave.setEnabled(false);
+                currentMeaning.setText("Select a term");
+                currentMeaning.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+                currentMeaning.setForeground(Color.GRAY);
+            }
         }
     }
 }
