@@ -86,6 +86,12 @@ public class Test {
         }
     }
 
+    public void fillGlossary(Glossary g, int itemCount) {
+        for (int i = 0; i < itemCount; i++) {
+            g.upsert("autoTerm" + i, "auto meaning " + i);
+        }
+    }
+
     /**
      * Make default costructor private.˙
      */
