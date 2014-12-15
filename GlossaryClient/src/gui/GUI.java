@@ -93,7 +93,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             offline = false;
             // Hosting
             title += " - Hosting";
-            stat += (stat.isEmpty() ? "" : "- ")
+            stat += (stat.isEmpty() ? "" : " - ")
                     + "Hosting on port "
                     + Client.get().getAdHocServer().getCurrentPort();
             host.setText("Stop Hosting");
