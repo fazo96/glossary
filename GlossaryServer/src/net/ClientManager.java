@@ -69,8 +69,8 @@ public class ClientManager {
      */
     public void disconnectAll() {
         // Stop network activity of all clients
-        clients.forEach((ConnectedClient c) -> c.stopNetworkActivity());
         synchronized (clients) {
+            clients.forEach((ConnectedClient c) -> c.stopNetworkActivity());
             clients.clear(); // Empty the clients list
         }
     }
