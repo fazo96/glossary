@@ -488,6 +488,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         JFileChooser fc = new JFileChooser();
         fc.setMultiSelectionEnabled(true);
         boolean succ = false;
+        fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
         if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             for (File f : fc.getSelectedFiles()) // Import from string
             {
@@ -510,6 +511,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      */
     private void bExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExportActionPerformed
         JFileChooser fc = new JFileChooser();
+        fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
         if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             if (FileUtil.writeFile(fc.getSelectedFile(), Client.get().getGlossary().asString())) {
                 JOptionPane.showMessageDialog(this, "Export successfull");
