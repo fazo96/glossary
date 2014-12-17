@@ -55,7 +55,7 @@ public class Settings extends javax.swing.JFrame {
      * Applies the settings to the components of the client
      */
     public void apply() {
-        Client.get().getConnection().setAddress(settings.getProperty("port"));
+        Client.get().getConnection().setAddress(settings.getProperty("address"));
         int port = Integer.parseInt(settings.getProperty("port"));
         Client.get().getConnection().setPort(port);
         Client.get().getAdHocServer().setPort(port);
@@ -182,7 +182,7 @@ public class Settings extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
