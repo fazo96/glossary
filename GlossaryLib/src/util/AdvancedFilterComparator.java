@@ -1,6 +1,9 @@
 package util;
 
+import com.mysql.jdbc.StringUtils;
 import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Compares two Glossary records
@@ -25,14 +28,17 @@ public class AdvancedFilterComparator implements Comparator {
         if (filters == null || filters.length == 0) {
             return 0;
         }
-        int i = 0;
+        int total = 0;
         s = s.toLowerCase();
         for (String filter : filters) {
-            if (s.contains(filter)) {
-                i++;
+            Pattern p = Pattern.compile(filter);
+            Matcher m = p.matcher(s);
+            while (m.find()) {
+                total++;
             }
         }
-        return i;
+        System.out.println("Check: " + s + "\nIt contains: " + total + " filters");
+        return total;
     }
 
     @Override
@@ -42,7 +48,7 @@ public class AdvancedFilterComparator implements Comparator {
         if (s2.length != 2 || s1.length != 2) {
             throw new UnsupportedOperationException("Can't compare these records");
         }
-        return (matches(s1[0]) + matches(s1[1])) - (matches(s2[0]) + matches(s2[1]));
+        return (matches(s2[0]) + matches(s2[1])) - (matches(s1[0]) + matches(s1[1]));
     }
 
 }

@@ -19,13 +19,14 @@ public class AdvancedFilter implements Predicate<String[]> {
     @Override
     public boolean test(String[] toTest) {
         if(filters == null || filters.length == 0) return false;
+        int i = 0;
         for (String str : toTest) {
             for (String filter : filters) {
                 if (str.toLowerCase().contains(filter)) {
-                    return true;
+                    i++;
                 }
             }
         }
-        return false;
+        return i >= filters.length;
     }
 }
