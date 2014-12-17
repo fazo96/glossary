@@ -5,9 +5,11 @@
  */
 package gui;
 
+import java.util.Properties;
 import main.Client;
 import util.FileUtil;
 import util.GUIUtil;
+import util.SettingsParser;
 
 /**
  *
@@ -16,8 +18,7 @@ import util.GUIUtil;
 public class Settings extends javax.swing.JFrame {
 
     private String path = "settings.txt";
-    private int port;
-    private String address;
+    private Properties settings;
     private boolean firstTime;
 
     /**
@@ -26,6 +27,7 @@ public class Settings extends javax.swing.JFrame {
     public Settings() {
         initComponents();
         this.setLocationRelativeTo(null);
+        settings = new Properties();
         if (!load()) {
             // No settings? then it's the first time the user uses the Glossary
             firstTime = true;
@@ -43,8 +45,8 @@ public class Settings extends javax.swing.JFrame {
      * Resets default settings
      */
     public void resetDefaults() {
-        address = "localhost";
-        port = 4000;
+        settings.setProperty("address", "localhost");
+        settings.setProperty("port", "4000");
         save();
         apply();
     }
@@ -53,53 +55,29 @@ public class Settings extends javax.swing.JFrame {
      * Applies the settings to the components of the client
      */
     public void apply() {
-        Client.get().getConnection().setAddress(address);
+        Client.get().getConnection().setAddress(settings.getProperty("port"));
+        int port = Integer.parseInt(settings.getProperty("port"));
         Client.get().getConnection().setPort(port);
         Client.get().getAdHocServer().setPort(port);
         // Apply to GUI:
-        ipText.setText(address);
+        ipText.setText(settings.getProperty("address"));
         portText.setText("" + port);
     }
 
     public boolean load() {
-        String s = FileUtil.readFile(path);
-        if (s == null) {
-            return false;
+        Properties p = SettingsParser.parseFile(path, settings);
+        if (p != null) {
+            settings = p;
         }
-        String ss[] = s.trim().split(":");
-        if (ss.length != 2) {
-            return false;
-        }
-        address = ss[0];
-        try {
-            port = Integer.parseInt(ss[1]);
-        } catch (NumberFormatException e) {
-            // Port invalid
-            return false;
-        }
-        return true;
+        return p != null;
     }
 
     public boolean save() {
-        return FileUtil.writeFile(path, address + ":" + port);
+        return SettingsParser.write(path, settings);
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-        save();
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-        save();
+    public Properties getSettingsStore() {
+        return settings;
     }
 
     /**
@@ -227,11 +205,12 @@ public class Settings extends javax.swing.JFrame {
 
     private void bResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bResetActionPerformed
         ipText.setText("localhost");
-        portText.setText("" + port);
+        portText.setText("4000");
     }//GEN-LAST:event_bResetActionPerformed
 
     private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
-        address = ipText.getText();
+        String address = ipText.getText();
+        int port;
         try {
             port = Integer.parseInt(portText.getText());
             if (port > 65535 || port < 0) {
@@ -242,6 +221,8 @@ public class Settings extends javax.swing.JFrame {
             GUIUtil.tellError("Port number invalid");
             return;
         }
+        settings.setProperty("address", address);
+        settings.setProperty("port", ""+port);
         apply();
         if (save()) {
             GUIUtil.tell("Settings saved successfully");
