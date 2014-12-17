@@ -1,3 +1,9 @@
+# This is the Default Glossary packaged with the Glossary applications.
+# All that is written after a "#" is ignored by the program (like a comment)
+
+# Use this to test the glossary. It would be nice to have it filled with the
+# words from Gestione Impresa.
+
 Addresses the following aspects: explains the subject listed
 stated aims: the objectives explained
 role: what a person does

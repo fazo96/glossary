@@ -494,7 +494,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 String in = FileUtil.readFile(f);
                 if (in != null && !in.isEmpty()) {
                     succ = true;
-                    Client.get().getGlossary().fromString(in);
+                    Client.get().getGlossary().fromString(in,"#");
                 }
             }
         }

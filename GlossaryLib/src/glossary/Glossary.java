@@ -154,7 +154,7 @@ public abstract class Glossary {
         if (content == null) {
             return -1;
         }
-        return fromString(content);
+        return fromString(content,"#");
     }
 
     /**
@@ -182,10 +182,11 @@ public abstract class Glossary {
      * @param content the source string
      * @return the number of terms successfully loaded.
      */
-    public int fromString(String content) {
+    public int fromString(String content, String commentPattern) {
         int count = 0;
         for (String s : content.split("\n")) {
-            if (upsert(s)) {
+            if(s.trim().startsWith(commentPattern)) continue;
+            if (upsert(s.split(commentPattern,2)[0])) {
                 count++;
             }
         }
