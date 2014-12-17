@@ -28,10 +28,10 @@ public class Settings extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         settings = new Properties();
+        resetDefaults();
         if (!load()) {
             // No settings? then it's the first time the user uses the Glossary
             firstTime = true;
-            resetDefaults();
             GUIUtil.tell("Welcome to Glossary.\nIf you need any help,"
                     + " the User Manual is available in"
                     + " 'File' -> 'User Manual'");
@@ -47,7 +47,6 @@ public class Settings extends javax.swing.JFrame {
     public void resetDefaults() {
         settings.setProperty("address", "localhost");
         settings.setProperty("port", "4000");
-        save();
         apply();
     }
 
