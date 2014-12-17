@@ -86,6 +86,15 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             stat += "Connected to "
                     + Client.get().getConnection().getCurrentAddress()
                     + ":" + Client.get().getConnection().getCurrentPort();
+        } else if (Client.get().getConnection().isConnecting()) {
+            offline = false;
+            // ConnectING to server
+            title += " - Connecting";
+            bConnect.setText("Disconnect");
+            stat += "Connecting to "
+                    + Client.get().getConnection().getCurrentAddress()
+                    + ":" + Client.get().getConnection().getCurrentPort()
+                    + "...";
         } else {
             bConnect.setText("Connect");
         }
@@ -489,10 +498,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 Client.get().getConnection().disconnect();
             }
         } else {
-            if (Client.get().getConnection().connect()) {
-                // If connection is successfull
-                GUIUtil.tell("Successfully connected to server");
-            }
+            Client.get().getConnection().connect();
         }
         updateWindowInformation();
     }//GEN-LAST:event_bConnectActionPerformed
@@ -604,12 +610,12 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 updateWindowInformation();
             }
         } else {
-            if (Client.get().getConnection().isConnected()) {
+            /*if (Client.get().getConnection().isConnected()) {
                 if (!GUIUtil.ask("Are you sure you want to disconnect from the Server?")) {
                     // If user is Connected to some server and he doesn't want to disconnect then return
                     return;
                 }
-            }
+            }*/
             // Start server
             new Thread(Client.get().getAdHocServer()).start();
         }
@@ -624,11 +630,14 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     }//GEN-LAST:event_formWindowClosing
 
     private void renameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renameActionPerformed
-        if(entryList.getSelectedValue() == null) return;
-        String newName = JOptionPane.showInputDialog("How do you want to rename "+(String) entryList.getSelectedValue()+"?");
-        if(newName != null && !newName.isEmpty()){
-            if(Client.get().getGlossary().delete((String) entryList.getSelectedValue()))
-                Client.get().getGlossary().upsert(newName,currentMeaning.getText());
+        if (entryList.getSelectedValue() == null) {
+            return;
+        }
+        String newName = JOptionPane.showInputDialog("How do you want to rename " + (String) entryList.getSelectedValue() + "?");
+        if (newName != null && !newName.isEmpty()) {
+            if (Client.get().getGlossary().delete((String) entryList.getSelectedValue())) {
+                Client.get().getGlossary().upsert(newName, currentMeaning.getText());
+            }
         }
     }//GEN-LAST:event_renameActionPerformed
     /**

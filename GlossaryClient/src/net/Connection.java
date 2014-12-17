@@ -3,6 +3,7 @@ package net;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,7 +18,7 @@ import main.Client;
 public class Connection implements Runnable {
 
     private Socket socket;
-    private boolean connected;
+    private boolean connected, connecting;
     private ObjectOutputStream oos;
     private String address;
     private int port;
@@ -25,6 +26,7 @@ public class Connection implements Runnable {
 
     public Connection(String address, int port) {
         connected = false;
+        connecting = false;
         this.address = address;
         this.port = port;
     }
@@ -34,6 +36,7 @@ public class Connection implements Runnable {
      */
     public void disconnect() {
         connected = false;
+        connecting = false;
         Client.get().getGUI().updateWindowInformation();
         if (socket != null) {
             try {
@@ -49,35 +52,22 @@ public class Connection implements Runnable {
      *
      * @param address IP address or hostname
      * @param port port
-     * @return true if successful
      */
-    public boolean connect(String address, int port) {
+    public void connect(String address, int port) {
         this.address = address;
         this.port = port;
-        return connect();
+        connect();
     }
 
     /**
      * Connects to the last address and port provided.
-     *
-     * @return true if successful
      */
-    public boolean connect() {
-        if(connected) disconnect();
-        try {
-            socket = new Socket(address, port);
-            oos = new ObjectOutputStream(socket.getOutputStream());
-        } catch (IOException ex) {
-            System.out.println("Could not connect to " + address + ":" + port);
-            JOptionPane.showMessageDialog(null, "Could not connect to " + address + ":" + port);
-            connected = false;
-            return connected;
+    public void connect() {
+        if (connected) {
+            disconnect();
         }
-        connected = true;
-        Client.get().getGUI().updateWindowInformation();
-        firstMessageAlreadyReceived = false;
         new Thread(this).start();
-        return connected;
+
     }
 
     /**
@@ -100,9 +90,29 @@ public class Connection implements Runnable {
 
     @Override
     public void run() {
-        if (!connected) {
+        connecting = true;
+        Client.get().getGUI().updateWindowInformation();
+        try {
+            socket = new Socket();
+            socket.connect(new InetSocketAddress(address,port)/*,15000*/);
+            oos = new ObjectOutputStream(socket.getOutputStream());
+        } catch (IOException ex) {
+            System.out.println("Could not connect to " + address + ":" + port + ":\n" + ex);
+            JOptionPane.showMessageDialog(null, "Could not connect to " + address + ":" + port + ":\n" + ex);
+            connected = false;
+            connecting = false;
+            Client.get().getGUI().updateWindowInformation();
             return;
         }
+        if (!connecting) {
+            // Received by a call to disconnect() while the socket was connecting
+            disconnect();
+            return;
+        }
+        connected = true;
+        connecting = false;
+        Client.get().getGUI().updateWindowInformation();
+        firstMessageAlreadyReceived = false;
         ObjectInputStream ois;
         try {
             ois = new ObjectInputStream(socket.getInputStream());
@@ -160,6 +170,10 @@ public class Connection implements Runnable {
 
     public boolean isConnected() {
         return connected;
+    }
+
+    public boolean isConnecting() {
+        return connecting;
     }
 
     /**

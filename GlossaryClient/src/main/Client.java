@@ -134,8 +134,14 @@ public class Client {
                 new Authenticator() {
                     @Override
                     public PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(
-                                authUser, authPassword.toCharArray());
+                        if (getRequestingHost().equalsIgnoreCase(address.trim())) {
+                            System.out.println("[Proxy] Authenticated to " + getRequestingHost());
+                            return new PasswordAuthentication(
+                                    authUser, authPassword.toCharArray());
+                        } else {
+                            System.out.println("[Proxy] Invalid Auth. request (from " + getRequestingHost() + " instead of " + address + ")");
+                            return null;
+                        }
                     }
                 }
         );
