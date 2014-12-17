@@ -1,5 +1,6 @@
 package main;
 
+import java.io.File;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,13 +21,17 @@ public class Main {
      * @param args args are not used in this program
      */
     public static void main(String args[]) {
+        if (!new File("settings.txt").exists()) {
+            System.out.println("[WARNING] Settings file not found. Using default settings.");
+        }
+        // Put default settings
+        Properties defaults = new Properties();
+        defaults.setProperty("server_port", "4000");
+        defaults.setProperty("glossary_file", "glossary.txt");
         // Parse settings
-        Properties settings = SettingsParser.parseFile("settings.txt", null);
+        Properties settings = SettingsParser.parseFile("settings.txt", defaults);
         int port = 4000;
         try {
-            if (settings == null) {
-                throw new Exception("Could not read \"settings.txt\"");
-            }
             if (settings.getProperty("server_port") == null) {
                 throw new Exception("Invalid port");
             }
@@ -67,7 +72,7 @@ public class Main {
                         sqlport,
                         settings.getProperty("sql_database_name"),
                         settings.getProperty("sql_database_user"));
-                
+
             } catch (Exception ex) {
                 // Failed
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

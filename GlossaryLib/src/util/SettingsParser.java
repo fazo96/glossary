@@ -19,8 +19,15 @@ public class SettingsParser {
      */
     public static Properties parseFile(File f, Properties defaults) {
         String content = FileUtil.readFile(f);
-        if (content == null || content.isEmpty()) {
-            return null;
+        if ((content == null || content.isEmpty())) {
+            // If settings file doesn't exist or is empty
+            if (defaults == null) {
+                // If default settings are undefined
+                return null;
+            } else {
+                // return default settings
+                return defaults;
+            }
         }
         Properties p = new Properties(defaults);
         for (String s : content.split("\n")) {
