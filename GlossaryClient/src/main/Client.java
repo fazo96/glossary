@@ -4,6 +4,8 @@ import glossary.CommandParser;
 import glossary.Glossary;
 import glossary.GlossaryList;
 import gui.GUI;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import javax.swing.UIManager;
 import net.ClientManager;
 import net.Connection;
@@ -44,6 +46,7 @@ public class Client {
         } catch (Exception ex) {
             System.out.println("Unable to load native look and feel");
         }
+
         // Prepare ClientManager
         clientManager = new ClientManager(null, null);
         /**
@@ -115,6 +118,31 @@ public class Client {
         gui = new GUI();
         gui.setVisible(true);
 
+    }
+
+    /**
+     * Sets the HTTP Proxy information that will be used for every TCP/IP
+     * connection.
+     *
+     * @param address the proxy address
+     * @param port the proxy port
+     * @param authUser the user for authentication
+     * @param authPassword the password for authentication
+     */
+    public void setProxy(String address, int port, final String authUser, final String authPassword) {
+        Authenticator.setDefault(
+                new Authenticator() {
+                    @Override
+                    public PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(
+                                authUser, authPassword.toCharArray());
+                    }
+                }
+        );
+        System.setProperty("http.proxyHost", address);
+        System.setProperty("http.proxyPort", port + "");
+        System.setProperty("http.proxyUser", authUser);
+        System.setProperty("http.proxyPassword", authPassword);
     }
 
     /**
