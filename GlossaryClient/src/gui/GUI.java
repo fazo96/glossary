@@ -132,6 +132,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         bDelete = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JSeparator();
         status = new javax.swing.JLabel();
+        rename = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         file = new javax.swing.JMenu();
         manual = new javax.swing.JMenuItem();
@@ -149,12 +150,15 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Glossary");
-        setMinimumSize(new java.awt.Dimension(400, 300));
+        setMinimumSize(new java.awt.Dimension(525, 390));
+        setPreferredSize(new java.awt.Dimension(525, 390));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
         });
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(518, 350));
 
         entryList.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         jScrollPane1.setViewportView(entryList);
@@ -163,7 +167,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         bNew.setText("Create");
         bNew.setMaximumSize(new java.awt.Dimension(75, 23));
         bNew.setMinimumSize(new java.awt.Dimension(75, 23));
-        bNew.setPreferredSize(new java.awt.Dimension(75, 23));
+        bNew.setPreferredSize(new java.awt.Dimension(73, 23));
         bNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bNewActionPerformed(evt);
@@ -189,9 +193,11 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
         bSave.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         bSave.setText("Save");
+        bSave.setToolTipText("");
         bSave.setEnabled(false);
         bSave.setMaximumSize(new java.awt.Dimension(65, 23));
         bSave.setMinimumSize(new java.awt.Dimension(65, 23));
+        bSave.setPreferredSize(new java.awt.Dimension(75, 23));
         bSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bSaveActionPerformed(evt);
@@ -229,6 +235,15 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
 
         status.setText("Offline");
 
+        rename.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        rename.setText("Rename");
+        rename.setEnabled(false);
+        rename.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                renameActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -245,12 +260,14 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(bNew, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(bNew, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(bDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(rename, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))))
+                                .addComponent(bDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 5, Short.MAX_VALUE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(entries)
                         .addGap(135, 135, 135)
@@ -269,13 +286,14 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bNew, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(search))
+                    .addComponent(search)
+                    .addComponent(rename))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -604,6 +622,15 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         exitActionPerformed(null);
     }//GEN-LAST:event_formWindowClosing
+
+    private void renameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renameActionPerformed
+        if(entryList.getSelectedValue() == null) return;
+        String newName = JOptionPane.showInputDialog("How do you want to rename "+(String) entryList.getSelectedValue()+"?");
+        if(newName != null && !newName.isEmpty()){
+            if(Client.get().getGlossary().delete((String) entryList.getSelectedValue()))
+                Client.get().getGlossary().upsert(newName,currentMeaning.getText());
+        }
+    }//GEN-LAST:event_renameActionPerformed
     /**
      * Don't remove this method because if you do netbeans will change the
      * GUI.form and the GUI will not run. I tried to fix this, could not do it!
@@ -649,6 +676,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private javax.swing.JMenuItem manual;
     private javax.swing.JLabel meaning;
     private javax.swing.JMenu network;
+    private javax.swing.JButton rename;
     private javax.swing.JTextField search;
     private javax.swing.JMenuItem settings;
     private javax.swing.JLabel status;
@@ -664,6 +692,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         bDelete.setEnabled(!entryList.getSelectedValuesList().isEmpty());
         if (Client.get().getGlossary().size() == 0) {
             currentMeaning.setText("Welcome to Glossary!\nStart by creating a new term.");
+            currentMeaning.setEditable(false);
             currentMeaning.setFont(new Font("Segoe UI", Font.ITALIC, 12));
             currentMeaning.setForeground(Color.GRAY);
         } else {
@@ -671,6 +700,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 // Can change the Meaning
                 currentMeaning.setText(Client.get().getGlossary().meaningOf((String) entryList.getSelectedValue()));
                 currentMeaning.setEditable(true);
+                rename.setEnabled(true);
                 bSave.setEnabled(true);
                 currentMeaning.setFont(new Font("Segoe UI", Font.PLAIN, 13));
                 currentMeaning.setForeground(Color.BLACK);
@@ -678,6 +708,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 // Can't change the meaning
                 currentMeaning.setEditable(false);
                 bSave.setEnabled(false);
+                rename.setEnabled(false);
                 currentMeaning.setText("Select a term");
                 currentMeaning.setFont(new Font("Segoe UI", Font.ITALIC, 12));
                 currentMeaning.setForeground(Color.GRAY);
