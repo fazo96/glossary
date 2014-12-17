@@ -2,8 +2,8 @@ package glossary;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import util.AdvancedFilter;
+import util.AdvancedFilterComparator;
 
 /**
  * This object represents a Glossary implemented with a List as engine.
@@ -205,7 +205,8 @@ public class GlossaryList extends Glossary {
             } else {
                 // Filter all the words
                 ol = list.stream()
-                        .filter(new AdvancedFilter(filter)).toArray();
+                        .filter(new AdvancedFilter(filter))
+                        .sorted(new AdvancedFilterComparator(filter)).toArray();
             }
         }
         // Convert the Array

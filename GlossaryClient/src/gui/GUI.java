@@ -65,7 +65,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
      */
     public void updateTermList() {
         if (!search.getText().isEmpty() && !search.getText().equals(defaultSearchFieldValue)) {
-            entryList.setListData(Client.get().getGlossary().getSortedWordList(search.getText()));
+            entryList.setListData(Client.get().getGlossary().getWordList(search.getText()));
         } else {
             entryList.setListData(Client.get().getGlossary().getSortedWordList());
         }

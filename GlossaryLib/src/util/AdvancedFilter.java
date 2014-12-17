@@ -4,7 +4,8 @@ import java.util.function.Predicate;
 
 /**
  * This is an advanced filter for searching through arrays of strings.
- *
+ * It allows advanced filtering using a String regex.
+ * 
  * @author fazo
  */
 public class AdvancedFilter implements Predicate<String[]> {
