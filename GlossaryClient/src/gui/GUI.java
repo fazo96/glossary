@@ -35,7 +35,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         settingsWindow = new Settings();
         // Init some other window components.
         updateWindowInformation();
-        valueChanged(null);
+        updateButtonsAndMeaning();
         defaultSearchFieldValue = search.getText();
         // Display the window at the center of the screen (fixes error on linux)
         setLocationRelativeTo(null);
@@ -513,7 +513,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 String in = FileUtil.readFile(f);
                 if (in != null && !in.isEmpty()) {
                     succ = true;
-                    Client.get().getGlossary().fromString(in,"#");
+                    Client.get().getGlossary().fromString(in, "#");
                 }
             }
         }
@@ -682,12 +682,11 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
     private javax.swing.JLabel status;
     // End of variables declaration//GEN-END:variables
 
-    @Override
     /**
      * This function gets called when the selection of the list changes. It
      * resets the status of the buttons and the Meaning text area.
      */
-    public void valueChanged(ListSelectionEvent lse) {
+    public void updateButtonsAndMeaning() {
         // delete button enabled only if at least 1 term is selected
         bDelete.setEnabled(!entryList.getSelectedValuesList().isEmpty());
         if (Client.get().getGlossary().size() == 0) {
@@ -714,5 +713,15 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
                 currentMeaning.setForeground(Color.GRAY);
             }
         }
+    }
+
+    /**
+     * Called when the selected value in the entry list changes.
+     *
+     * @param lse event
+     */
+    @Override
+    public void valueChanged(ListSelectionEvent lse) {
+        updateButtonsAndMeaning();
     }
 }
