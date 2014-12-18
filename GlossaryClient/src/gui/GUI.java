@@ -448,6 +448,7 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
             manualWindow = new UserManual();
         }
         manualWindow.setVisible(true);
+        manualWindow.setScrollBarToTheTop();
     }//GEN-LAST:event_manualActionPerformed
 
     /**
@@ -635,8 +636,9 @@ public class GUI extends javax.swing.JFrame implements ListSelectionListener {
         }
         String newName = JOptionPane.showInputDialog("How do you want to rename " + (String) entryList.getSelectedValue() + "?");
         if (newName != null && !newName.isEmpty()) {
+            String s = Client.get().getGlossary().meaningOf((String) entryList.getSelectedValue());
             if (Client.get().getGlossary().delete((String) entryList.getSelectedValue())) {
-                Client.get().getGlossary().upsert(newName, currentMeaning.getText());
+                Client.get().getGlossary().upsert(newName, s);
             }
         }
     }//GEN-LAST:event_renameActionPerformed

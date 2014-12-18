@@ -12,6 +12,7 @@ import util.FileUtil;
 
 /**
  * The User Manual interface.
+ *
  * @author Gian
  */
 public class UserManual extends javax.swing.JFrame {
@@ -24,18 +25,21 @@ public class UserManual extends javax.swing.JFrame {
         // Display the window at the center of the screen (fixes error on linux)
         setLocationRelativeTo(null);
         tabs.addChangeListener(new ChangeListener() {
-            
+
             // Every time the selected Tab is changed...
-            
             @Override
             public void stateChanged(ChangeEvent ce) {
-                // We're sure it's a JScrollPane because we only have JScrollPanes
-                JScrollPane pane = ((JScrollPane)tabs.getSelectedComponent());
-                // Reset the Scrollbar so it shows the start of the file
-                pane.getVerticalScrollBar().setValue(pane.getVerticalScrollBar().getMinimum());
+                setScrollBarToTheTop();
             }
         });
         loadManual("UserManual");
+    }
+
+    public void setScrollBarToTheTop() {
+        // We're sure it's a JScrollPane because we only have JScrollPanes
+        JScrollPane pane = ((JScrollPane) tabs.getSelectedComponent());
+        // Reset the Scrollbar so it shows the start of the file
+        pane.getVerticalScrollBar().setValue(pane.getVerticalScrollBar().getMinimum());
     }
 
     /**
@@ -45,7 +49,9 @@ public class UserManual extends javax.swing.JFrame {
      */
     public void loadManual(String folderpath) {
         // Check if folder Exists
-        if(!FileUtil.folderExists(folderpath)) return;
+        if (!FileUtil.folderExists(folderpath)) {
+            return;
+        }
         for (File f : FileUtil.filesIn(folderpath)) {
             // For each file in the given folder
             if (f.getName().endsWith(".html")) {
