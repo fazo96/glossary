@@ -14,7 +14,7 @@ public class About extends javax.swing.JFrame {
     public About() {
         initComponents();
         this.setLocationRelativeTo(null);
-        jTextPane1.setText(FileUtil.readFile("docs/about.html"));
+        jTextPane1.setText(FileUtil.readFile("UserManual/About.html"));
     }
 
     /**
@@ -31,7 +31,7 @@ public class About extends javax.swing.JFrame {
 
         setTitle("About");
         setMinimumSize(new java.awt.Dimension(400, 300));
-        setPreferredSize(new java.awt.Dimension(800, 600));
+        setPreferredSize(new java.awt.Dimension(400, 300));
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
         jTextPane1.setEditable(false);
