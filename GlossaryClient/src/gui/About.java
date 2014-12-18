@@ -30,12 +30,17 @@ public class About extends javax.swing.JFrame {
         jTextPane1 = new javax.swing.JTextPane();
 
         setTitle("About");
-        setMinimumSize(new java.awt.Dimension(400, 300));
-        setPreferredSize(new java.awt.Dimension(400, 300));
+        setMinimumSize(new java.awt.Dimension(400, 335));
+        setPreferredSize(new java.awt.Dimension(400, 335));
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
+
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(400, 335));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(400, 335));
 
         jTextPane1.setEditable(false);
         jTextPane1.setContentType("text/html"); // NOI18N
+        jTextPane1.setMinimumSize(new java.awt.Dimension(400, 335));
+        jTextPane1.setPreferredSize(new java.awt.Dimension(335, 335));
         jScrollPane1.setViewportView(jTextPane1);
 
         getContentPane().add(jScrollPane1);
