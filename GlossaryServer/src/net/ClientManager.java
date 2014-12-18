@@ -8,6 +8,7 @@ package net;
 import glossary.CommandParser;
 import glossary.Glossary;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 /**
  * This class is an Orchestrator that can perform operations on multiple
@@ -70,7 +71,16 @@ public class ClientManager {
     public void disconnectAll() {
         // Stop network activity of all clients
         synchronized (clients) {
-            clients.forEach((ConnectedClient c) -> c.stopNetworkActivity());
+            try {
+                clients.forEach((ConnectedClient c) -> c.stopNetworkActivity());
+            } catch (ConcurrentModificationException ex) {
+                /**
+                 * This exception occurs because c removes itself from clients
+                 * when stopping his network activity, but we can ignore the
+                 * failure in the removal because after this istruction we clear
+                 * the list.
+                 */
+            }
             clients.clear(); // Empty the clients list
         }
     }

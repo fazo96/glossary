@@ -1,5 +1,6 @@
 package net;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -9,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import main.Client;
+import util.GUIUtil;
 
 /**
  * A Connection to a Server.
@@ -139,7 +141,13 @@ public class Connection implements Runnable {
             } catch (IOException ex) {
                 // There was some error while reading the data so we skip this
                 // reading
-                continue;
+                if (ex instanceof EOFException) {
+                    GUIUtil.tellError("Lost connection to the server");
+                    System.out.println("Lost connection to the server");
+                    break;
+                } else {
+                    continue;
+                }
             } catch (ClassNotFoundException ex) {
                 // Fired if the object has a Class that does not exist.
                 // This error should never happen.
@@ -166,6 +174,8 @@ public class Connection implements Runnable {
                 }
             }
         }
+        // Finished the loop
+        disconnect();
     }
 
     public boolean isConnected() {

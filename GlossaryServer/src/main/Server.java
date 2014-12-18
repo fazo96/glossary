@@ -181,6 +181,7 @@ public class Server implements Runnable {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        clientManager.disconnectAll();
     }
 
     /**

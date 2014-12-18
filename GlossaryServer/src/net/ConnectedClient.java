@@ -1,12 +1,14 @@
 package net;
 
 import glossary.Glossary;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 /**
  * An instance of ConnectedClient represents a connection with a client.
  *
@@ -50,7 +52,7 @@ public class ConnectedClient implements Runnable {
             System.out.println("InputStream init failed for " + socket.getInetAddress().getHostAddress());
             return;
         }
-        while (true) {
+        while (connected) {
             try {
                 // Pause for a while to not use too much CPU power
                 Thread.sleep(50);
@@ -58,17 +60,18 @@ public class ConnectedClient implements Runnable {
                 // This exception is harmless and can be ignored because
                 // it's not a problem if the Thread doesn't sleep correctly
             }
-            if (!connected) {
-                // Stop Thread.
-                break;
-            }
             Object o = null; // Temporary object
             try {
                 o = ois.readObject(); // Read from the socket
             } catch (IOException ex) {
                 // There was some error while reading the data so we skip this
                 // reading
-                continue;
+                if (ex instanceof EOFException) {
+                    System.out.println(socket.getInetAddress().getHostAddress() + " has disconnected.");
+                    break;
+                } else {
+                    continue;
+                }
             } catch (ClassNotFoundException ex) {
                 // Fired if the object has a Class that does not exist.
                 // This error should never happen.
