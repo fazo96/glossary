@@ -1,0 +1,14 @@
+Attenzione: per il sorgente netbeans Serve la JDK 8 e Netbeans 8!
+
+Inoltre è fondamentale impostare la working directory dei progetti a “src” dalle proprietà dei progetti (per farlo è sufficiente fare tasto destro su ogni progetto e premere proprietà, poi andare nella sezione “Run”)
+
+In caso ci siano problemi a far partire il programma da netbeans:
+
+l’ultima versione eseguibile è scaricabile da questo link: https://github.com/fazo96/glossary/releases (è disponibile anche lo zip col codice per ogni versione del programma).
+
+Per l’eseguibile .jar è necessario JAVA 8
+
+In questo zip è contenuta la versione 1.2.3.
+
+La documentazione è contenuta nel file README.md e nel codice sorgente.
+Il manuale utente è fruibile dal programma client.
